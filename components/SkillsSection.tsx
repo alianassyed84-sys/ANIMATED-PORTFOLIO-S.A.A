@@ -32,7 +32,7 @@ const SKILLS = [
 
 export default function SkillsSection() {
   return (
-    <section id="skills" className="py-24 px-6 md:px-12 bg-background relative overflow-hidden">
+    <section id="skills" className="py-16 md:py-24 px-4 md:px-12 bg-background relative overflow-hidden">
       {/* Background patterns */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none select-none overflow-hidden">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-accentCyan rounded-full blur-[150px]" />
@@ -54,7 +54,8 @@ export default function SkillsSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-6xl md:text-8xl font-black text-white"
+            style={{ willChange: "transform, opacity" }}
+            className="text-4xl sm:text-6xl md:text-8xl font-black text-white"
           >
             TECH <br />
             <span className="text-secondaryText/30 uppercase">Stack</span>
@@ -62,7 +63,7 @@ export default function SkillsSection() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {SKILLS.map((skill, index) => (
             <motion.div
               key={skill.category}
@@ -70,6 +71,7 @@ export default function SkillsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.8 }}
+              style={{ willChange: "transform, opacity" }}
               className="glass-card p-8 rounded-3xl space-y-6 group hover:border-accentCyan/30"
             >
               <div className="flex items-center gap-4">

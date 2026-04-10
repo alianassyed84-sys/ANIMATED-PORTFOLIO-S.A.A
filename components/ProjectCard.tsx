@@ -29,6 +29,7 @@ export default function ProjectCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8, ease: "easeOut" }}
+      style={{ willChange: "transform, opacity" }}
       className="glass-card overflow-hidden group rounded-3xl"
     >
       {/* Image Container */}

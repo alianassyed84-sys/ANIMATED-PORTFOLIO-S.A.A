@@ -3,7 +3,6 @@ import ContactSection from "@/components/ContactSection";
 import EducationTimeline from "@/components/EducationTimeline";
 import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
-import Overlay from "@/components/Overlay";
 import ProjectsGrid from "@/components/ProjectsGrid";
 import ScrollyCanvas from "@/components/ScrollyCanvas";
 import SkillsSection from "@/components/SkillsSection";
@@ -14,11 +13,8 @@ export default function Home() {
       {/* Navigation */}
       <Navigation />
 
-      {/* Hero Section with Scrollytelling */}
-      <div className="relative">
-        <ScrollyCanvas />
-        <Overlay />
-      </div>
+      {/* Hero Section with Scrollytelling (Integrated Overlay) */}
+      <ScrollyCanvas />
 
       {/* Main Content Sections */}
       <div className="relative z-20">

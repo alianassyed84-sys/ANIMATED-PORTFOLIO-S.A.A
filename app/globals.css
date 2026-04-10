@@ -16,7 +16,8 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth is intentionally removed —
+     it conflicts with scroll-driven canvas animations and causes stutter */
   background-color: var(--background);
 }
 
@@ -26,6 +27,20 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Promote to GPU layer for silky scroll compositing */
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (pointer: fine) {
+  html, body, a, button {
+    cursor: none !important;
+  }
+}
+
+/* Promote the sticky canvas to its own GPU compositing layer */
+canvas {
+  will-change: contents;
+  transform: translateZ(0);
 }
 
 ::selection {
@@ -62,4 +77,28 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+/* --- RESUME PRINT STYLES --- */
+@media print {
+  body {
+    background-color: var(--background) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Hide the 400vh canvas scroll area and navigation from the PDF */
+  nav, .glass-card {
+    display: none !important;
+  }
+  
+  #hero-canvas-container {
+    display: none !important;
+  }
+
+  /* Make sections flow naturally without big gaps */
+  section {
+    padding: 2rem 0 !important;
+    page-break-inside: avoid;
+  }
 }

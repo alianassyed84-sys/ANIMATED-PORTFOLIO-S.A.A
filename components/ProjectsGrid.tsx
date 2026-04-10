@@ -44,7 +44,7 @@ const PROJECTS = [
 
 export default function ProjectsGrid() {
   return (
-    <section id="work" className="py-24 px-6 md:px-12 bg-secondary">
+    <section id="work" className="py-16 md:py-24 px-4 md:px-12 bg-secondary">
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Header */}
         <div className="space-y-4">
@@ -60,7 +60,7 @@ export default function ProjectsGrid() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-6xl md:text-8xl font-black text-white leading-[0.9]"
+            className="text-4xl sm:text-6xl md:text-8xl font-black text-white leading-[0.9]"
           >
             FEATURED <br />
             <span className="text-secondaryText/30">PROJECTS</span>
@@ -76,7 +76,7 @@ export default function ProjectsGrid() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 pt-8 md:pt-12">
           {PROJECTS.map((project, index) => (
             <ProjectCard key={project.title} {...project} />
           ))}
