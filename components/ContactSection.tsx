@@ -151,7 +151,7 @@ export default function ContactSection() {
               <div className="space-y-6">
                 <h3 className="text-sm font-black text-white uppercase tracking-widest">Connect</h3>
                 <div className="flex flex-col gap-6">
-                  <a href="mailto:syedanasaliofficialdeveloper@gmail.com" className="flex items-center gap-4 group">
+                  <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=new" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
                     <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-accentCyan group-hover:bg-accentCyan group-hover:text-background transition-all">
                       <Mail size={20} />
                     </div>
