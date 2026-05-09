@@ -39,7 +39,7 @@ const TIMELINE = [
     period: "2025-2029",
     highlight: "Pursuing a Bachelor of Engineering in Computer Science with a focus on AI, full-stack development, and software engineering principles. Actively building real-world projects, participating in hackathons, and developing industry-ready expertise.",
     location: "Hyderabad, India",
-    board: "JNTUH",
+    board: "OU",
     tags: ["CSE", "OU", "AI Focus", "Hackathons"],
     current: true,
   },
@@ -47,7 +47,7 @@ const TIMELINE = [
 
 export default function EducationTimeline() {
   return (
-    <section id="education" className="py-16 md:py-24 px-4 md:px-12 bg-background relative overflow-hidden">
+    <section id="education" className="py-16 md:py-24 px-4 md:px-12 bg-transparent relative overflow-hidden">
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-accentCyan/5 blur-[120px] rounded-full pointer-events-none" />
 

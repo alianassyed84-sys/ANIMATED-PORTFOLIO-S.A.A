@@ -116,7 +116,7 @@ export default function ScrollyCanvas() {
       const safeIndex = Math.min(Math.max(rawIndex, 0), TOTAL_FRAMES - 1);
 
       // Skip draw if same frame as last time, UNLESS we are in the hero frames (need continuous animation)
-      const isHeroActive = safeIndex >= 22; 
+      const isHeroActive = safeIndex >= 22;
       if (safeIndex === lastIndexRef.current && !isHeroActive) return;
       lastIndexRef.current = safeIndex;
 
