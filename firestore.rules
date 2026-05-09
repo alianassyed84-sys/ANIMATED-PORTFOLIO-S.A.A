@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Function to check if the user is authenticated (admin)
+    // NOTE: If you removed the login system, you may need to allow public reads and writes temporarily.
+    // To make it secure, re-enable Firebase Auth and use this rule:
+    // function isAdmin() { return request.auth != null; }
+    
+    // For now, since the login system was removed per your request, 
+    // we allow anyone to read and write. 
+    // CHANGE THIS TO isAdmin() IN PRODUCTION!
+    
+    match /achievements/{document=**} {
+      // Allow public read if visible == true (if you implement the visibility toggle later)
+      // allow read: if resource.data.visible == true || isAdmin();
+      
+      allow read: if true;
+      allow write: if true; // Change to isAdmin() once authentication is re-enabled
+    }
+
+    match /internships/{document=**} {
+      allow read: if true;
+      allow write: if true; // Change to isAdmin() once authentication is re-enabled
+    }
+    
+    match /adminUsers/{document=**} {
+      allow read, write: if false; // Only manageable from Firebase Console
+    }
+  }
+}

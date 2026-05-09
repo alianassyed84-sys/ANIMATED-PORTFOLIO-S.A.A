@@ -1,0 +1,18 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Default rule: allow anyone to read files, but only authenticated users to upload.
+    // Since login was removed locally, allowing write for everyone temporarily.
+    
+    match /achievements/{allPaths=**} {
+      allow read: if true;
+      allow write: if true; // Change to `if request.auth != null;` in production
+    }
+    
+    match /internships/{allPaths=**} {
+      allow read: if true;
+      allow write: if true; // Change to `if request.auth != null;` in production
+    }
+  }
+}
