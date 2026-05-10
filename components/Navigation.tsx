@@ -52,6 +52,16 @@ export default function Navigation() {
     return () => observer.disconnect();
   }, []);
 
+  // Scroll locking for mobile
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
   return (
     <>
       {/* Scroll progress bar */}
@@ -115,7 +125,7 @@ export default function Navigation() {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-cursor="hover"
-                className="flex items-center gap-2 bg-accentCyan text-background px-3 md:px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider hover:bg-white hover:shadow-[0_0_20px_rgba(100,255,218,0.5)] transition-all cursor-none"
+                className="flex items-center gap-2 bg-accentCyan text-background px-4 md:px-5 py-2.5 rounded-full text-[10px] md:text-xs font-black uppercase tracking-wider hover:bg-white hover:shadow-[0_0_20px_rgba(100,255,218,0.5)] transition-all cursor-none"
               >
                 <span className="hidden sm:inline">Download CV</span>
                 <span className="sm:hidden">CV</span>
@@ -126,17 +136,17 @@ export default function Navigation() {
             {/* Hamburger — mobile only */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:text-accentCyan transition-colors"
+              className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:text-accentCyan transition-colors active:scale-95"
               aria-label="Toggle menu"
             >
               <AnimatePresence mode="wait">
                 {mobileOpen ? (
                   <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                    <X size={18} />
+                    <X size={20} />
                   </motion.div>
                 ) : (
                   <motion.div key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                    <Menu size={18} />
+                    <Menu size={20} />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -148,31 +158,54 @@ export default function Navigation() {
       {/* Mobile Drawer */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.98 }}
-            transition={{ duration: 0.25 }}
-            className="fixed top-20 left-4 right-4 z-40 glass-card rounded-3xl p-6 flex flex-col gap-2 md:hidden"
-          >
-            {NAV_ITEMS.map((item, i) => (
-              <motion.a
-                key={item.label}
-                href={item.href}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-                onClick={() => setMobileOpen(false)}
-                className={`text-base font-black uppercase tracking-widest py-3 px-4 rounded-xl border transition-all ${
-                  activeSection === item.href.replace("#", "")
-                    ? "text-accentCyan border-accentCyan/20 bg-accentCyan/5"
-                    : "text-secondaryText hover:text-accentCyan border-transparent hover:border-white/5"
-                }`}
-              >
-                {item.label}
-              </motion.a>
-            ))}
-          </motion.div>
+          <div className="fixed inset-0 z-[45] md:hidden">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+              className="absolute inset-0 bg-background/80 backdrop-blur-md"
+            />
+            
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="absolute top-0 right-0 h-full w-[80%] max-w-sm bg-secondary border-l border-white/5 p-8 flex flex-col pt-24"
+            >
+              <div className="space-y-6">
+                <p className="text-accentCyan text-[10px] font-black tracking-[0.4em] uppercase opacity-50 mb-4">Navigation</p>
+                {NAV_ITEMS.map((item, i) => (
+                  <motion.a
+                    key={item.label}
+                    href={item.href}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 + 0.2 }}
+                    onClick={() => setMobileOpen(false)}
+                    className={`block text-2xl font-black uppercase tracking-widest transition-all ${
+                      activeSection === item.href.replace("#", "")
+                        ? "text-accentCyan"
+                        : "text-white/40 hover:text-white"
+                    }`}
+                  >
+                    {item.label}
+                  </motion.a>
+                ))}
+              </div>
+
+              <div className="mt-auto space-y-6">
+                <div className="h-px w-full bg-white/5" />
+                <p className="text-secondaryText text-xs font-medium">Available for new opportunities.</p>
+                <div className="flex gap-4">
+                  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=syedanasaliofficialdeveloper@gmail.com" target="_blank" rel="noopener noreferrer" className="text-accentCyan text-xs font-bold uppercase tracking-widest">Email</a>
+                  <a href="https://linkedin.com/in/syedanasali" className="text-accentCyan text-xs font-bold uppercase tracking-widest">LinkedIn</a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </>

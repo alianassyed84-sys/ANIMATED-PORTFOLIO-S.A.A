@@ -169,7 +169,7 @@ export default function InternshipsSection() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: index * 0.15 }}
-                    className="md:hidden flex items-start gap-4 pl-12"
+                    className="md:hidden flex items-start gap-4 pl-10"
                   >
                     <div className="absolute left-[13px] top-3 w-4 h-4 rounded-full bg-background border-2 border-accentCyan z-10 shadow-[0_0_15px_rgba(100,255,218,0.5)]">
                       {internship.status === "ongoing" && (
@@ -177,54 +177,54 @@ export default function InternshipsSection() {
                       )}
                     </div>
 
-                    <div className="glass-card p-5 rounded-2xl space-y-3 relative group w-full">
+                    <div className="glass-card p-4 rounded-2xl space-y-3 relative group w-full border-white/5 active:border-accentCyan/30 transition-colors">
                       {internship.status === "ongoing" && (
-                        <div className="inline-block px-3 py-1 bg-accentCyan/20 border border-accentCyan/40 rounded-full text-[10px] font-black text-accentCyan tracking-widest animate-pulse mb-1">
+                        <div className="inline-block px-3 py-0.5 bg-accentCyan/20 border border-accentCyan/40 rounded-full text-[9px] font-black text-accentCyan tracking-widest animate-pulse mb-1">
                           ONGOING
                         </div>
                       )}
                       <div className="flex items-center gap-3">
                         {internship.logoUrl ? (
-                          <div className="w-10 h-10 rounded-xl overflow-hidden border border-accentCyan/30 flex-shrink-0">
+                          <div className="w-10 h-10 rounded-xl overflow-hidden border border-accentCyan/20 flex-shrink-0">
                             <Image src={internship.logoUrl} alt={internship.companyName} width={40} height={40} className="w-full h-full object-cover" />
                           </div>
                         ) : (
                           <div className="w-10 h-10 rounded-xl bg-accentCyan/10 border border-accentCyan/20 flex items-center justify-center text-accentCyan flex-shrink-0">
-                            <Briefcase size={20} />
+                            <Briefcase size={18} />
                           </div>
                         )}
                         <div>
-                          <p className="text-accentCyan text-[10px] font-mono">{internship.duration}</p>
-                          <h3 className="text-sm font-bold text-white leading-tight">{internship.companyName}</h3>
+                          <p className="text-accentCyan text-[9px] font-mono">{internship.duration}</p>
+                          <h3 className="text-sm font-black text-white leading-tight">{internship.companyName}</h3>
                         </div>
                       </div>
-                      <p className="text-secondaryText text-xs leading-relaxed">{internship.description}</p>
+                      <p className="text-secondaryText text-[11px] leading-relaxed line-clamp-4">{internship.description}</p>
                       {internship.technologies && internship.technologies.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 pt-1">
+                        <div className="flex flex-wrap gap-1 pt-0.5">
                           {internship.technologies.map((tech: string) => (
-                            <span key={tech} className="px-2 py-0.5 rounded-md bg-accentCyan/10 border border-accentCyan/20 text-[9px] font-bold text-accentCyan uppercase tracking-wider">
+                            <span key={tech} className="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[8px] font-bold text-accentSilver uppercase tracking-wider">
                               {tech}
                             </span>
                           ))}
                         </div>
                       )}
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-accentSilver uppercase tracking-wider">{internship.role}</span>
+                      <div className="flex items-center justify-between pt-1">
+                        <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">{internship.role}</span>
                       </div>
-                      <div className="flex flex-wrap gap-2 mt-3">
+                      <div className="flex flex-wrap gap-2 mt-3 pt-2 border-t border-white/5">
                           {internship.offerLetterUrl && (
-                             <button onClick={() => setSelectedPdf(internship.offerLetterUrl!)} className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-medium text-white bg-white/5 hover:bg-white/10 rounded-md border border-white/10 transition-colors">
-                               <FileText size={12} /> Offer Letter
+                             <button onClick={() => setSelectedPdf(internship.offerLetterUrl!)} className="flex items-center gap-1.5 px-2.5 py-1.5 text-[9px] font-bold text-white bg-white/5 hover:bg-white/10 rounded-md border border-white/10 active:scale-95 transition-all">
+                               <FileText size={12} /> OFFER LETTER
                              </button>
                           )}
                           {internship.recommendationLetterUrl && (
-                             <button onClick={() => setSelectedPdf(internship.recommendationLetterUrl!)} className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-medium text-white bg-white/5 hover:bg-white/10 rounded-md border border-white/10 transition-colors">
-                               <FileText size={12} /> Recommendation
+                             <button onClick={() => setSelectedPdf(internship.recommendationLetterUrl!)} className="flex items-center gap-1.5 px-2.5 py-1.5 text-[9px] font-bold text-white bg-white/5 hover:bg-white/10 rounded-md border border-white/10 active:scale-95 transition-all">
+                               <FileText size={12} /> RECOMMENDATION
                              </button>
                           )}
                           {internship.completionCertificateUrl && (
-                             <button onClick={() => setSelectedPdf(internship.completionCertificateUrl!)} className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-medium text-white bg-white/5 hover:bg-white/10 rounded-md border border-white/10 transition-colors">
-                               <FileText size={12} /> Certificate
+                             <button onClick={() => setSelectedPdf(internship.completionCertificateUrl!)} className="flex items-center gap-1.5 px-2.5 py-1.5 text-[9px] font-bold text-white bg-white/5 hover:bg-white/10 rounded-md border border-white/10 active:scale-95 transition-all">
+                               <FileText size={12} /> CERTIFICATE
                              </button>
                           )}
                         </div>

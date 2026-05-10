@@ -145,14 +145,13 @@ export default function EducationTimeline() {
                   </div>
                 </motion.div>
               </div>
-
               {/* === MOBILE LAYOUT === */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.15 }}
-                className="md:hidden flex items-start gap-4 pl-12"
+                className="md:hidden flex items-start gap-4 pl-10"
               >
                 {/* Mobile dot */}
                 <div className="absolute left-[13px] top-3 w-4 h-4 rounded-full bg-background border-2 border-accentCyan z-10 shadow-[0_0_15px_rgba(100,255,218,0.5)]">
@@ -161,15 +160,15 @@ export default function EducationTimeline() {
                   )}
                 </div>
 
-                <div className="glass-card p-5 rounded-2xl space-y-3 relative group w-full">
+                <div className="glass-card p-4 rounded-2xl space-y-3 relative group w-full border-white/5 active:border-accentCyan/30 transition-colors">
                   {item.status && (
-                    <div className="inline-block px-3 py-1 bg-accentCyan/20 border border-accentCyan/40 rounded-full text-[10px] font-black text-accentCyan tracking-widest animate-pulse mb-1">
+                    <div className="inline-block px-3 py-0.5 bg-accentCyan/20 border border-accentCyan/40 rounded-full text-[9px] font-black text-accentCyan tracking-widest animate-pulse mb-1">
                       {item.status}
                     </div>
                   )}
                   <div className="flex items-center gap-3">
                     {(item as any).logo ? (
-                      <div className="w-10 h-10 rounded-xl overflow-hidden border border-accentCyan/30 flex-shrink-0">
+                      <div className="w-10 h-10 rounded-xl overflow-hidden border border-accentCyan/20 flex-shrink-0">
                         <Image src={(item as any).logo} alt={item.institution} width={40} height={40} className="w-full h-full object-cover" />
                       </div>
                     ) : (
@@ -178,28 +177,29 @@ export default function EducationTimeline() {
                       </div>
                     )}
                     <div>
-                      <p className="text-accentCyan text-[10px] font-mono">{item.period}</p>
-                      <h3 className="text-sm font-bold text-white leading-tight">{item.institution}</h3>
+                      <p className="text-accentCyan text-[9px] font-mono">{item.period}</p>
+                      <h3 className="text-sm font-black text-white leading-tight">{item.institution}</h3>
                     </div>
                   </div>
-                  <p className="text-secondaryText text-xs leading-relaxed">{item.highlight}</p>
+                  <p className="text-secondaryText text-[11px] leading-relaxed line-clamp-4">{item.highlight}</p>
                   {(item as any).tags && (
-                    <div className="flex flex-wrap gap-1.5 pt-1">
+                    <div className="flex flex-wrap gap-1 pt-0.5">
                       {(item as any).tags.map((tag: string) => (
-                        <span key={tag} className="px-2 py-0.5 rounded-md bg-accentCyan/10 border border-accentCyan/20 text-[9px] font-bold text-accentCyan uppercase tracking-wider">
+                        <span key={tag} className="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[8px] font-bold text-accentSilver uppercase tracking-wider">
                           {tag}
                         </span>
                       ))}
                     </div>
                   )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-accentSilver uppercase tracking-wider">{item.degree || item.achievement}</span>
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">{item.degree || item.achievement}</span>
                     {(item as any).location && (
-                      <span className="text-[10px] text-secondaryText font-mono">📍 {(item as any).location}</span>
+                      <span className="text-[9px] text-secondaryText/60 font-mono">📍 {(item as any).location}</span>
                     )}
                   </div>
                 </div>
               </motion.div>
+
 
             </div>
           ))}

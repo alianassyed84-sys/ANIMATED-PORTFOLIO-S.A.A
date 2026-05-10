@@ -52,6 +52,13 @@ export default function ProjectCard({
     mouseY.set(0);
   };
 
+  // Handle tap for mobile (since hover isn't reliable)
+  const handleTap = () => {
+    if (window.innerWidth < 768 && liveUrl) {
+      window.open(liveUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <motion.div
       ref={cardRef}
@@ -59,9 +66,15 @@ export default function ProjectCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d", willChange: "transform" }}
+      style={{ 
+        rotateX: typeof window !== 'undefined' && window.innerWidth > 768 ? rotateX : 0, 
+        rotateY: typeof window !== 'undefined' && window.innerWidth > 768 ? rotateY : 0, 
+        transformStyle: "preserve-3d", 
+        willChange: "transform" 
+      }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onClick={handleTap}
       className="group relative glass-card overflow-hidden rounded-3xl cursor-pointer"
     >
       {featured && (
@@ -71,18 +84,18 @@ export default function ProjectCard({
       )}
 
       {/* Image Container */}
-      <div className="h-60 md:h-72 overflow-hidden relative">
+      <div className="h-52 sm:h-60 md:h-72 overflow-hidden relative">
         <Image
           src={image}
           alt={title}
           fill
-          className="object-cover transition-transform duration-700 group-hover:scale-110"
+          className="object-cover transition-transform duration-700 md:group-hover:scale-110"
         />
-        {/* Overlay on hover */}
+        {/* Overlay on hover (Desktop) / Persistent small indicators (Mobile) */}
         <motion.div
           initial={{ opacity: 0 }}
           whileHover={{ opacity: 1 }}
-          className="absolute inset-0 bg-background/70 backdrop-blur-sm flex items-center justify-center gap-4 z-10 transition-all"
+          className="absolute inset-0 bg-background/70 backdrop-blur-sm hidden md:flex items-center justify-center gap-4 z-10 transition-all"
         >
           {liveUrl && (
             <motion.a
@@ -116,6 +129,21 @@ export default function ProjectCard({
           )}
         </motion.div>
 
+        {/* Mobile Link Shortcut */}
+        <div className="absolute bottom-4 right-4 z-20 md:hidden flex gap-2">
+            {liveUrl && (
+                 <a 
+                    href={liveUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-accentCyan text-background flex items-center justify-center shadow-lg active:scale-90 transition-transform"
+                    onClick={(e) => e.stopPropagation()}
+                 >
+                    <ExternalLink size={18} strokeWidth={3} />
+                 </a>
+            )}
+        </div>
+
         {/* Category + Year badges */}
         <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
           <span
@@ -130,7 +158,7 @@ export default function ProjectCard({
           </span>
         </div>
         <div className="absolute top-4 right-4 z-10">
-          <span className="text-white/60 text-xs font-mono bg-black/30 backdrop-blur-sm px-2 py-1 rounded-md">
+          <span className="text-white/60 text-[10px] md:text-xs font-mono bg-black/30 backdrop-blur-sm px-2 py-1 rounded-md">
             {year}
           </span>
         </div>
@@ -139,26 +167,26 @@ export default function ProjectCard({
       {/* Content */}
       <div className="p-6 md:p-8 space-y-4">
         <div className="flex items-start justify-between gap-4">
-          <h3 className="text-xl md:text-2xl font-black text-white group-hover:text-accentCyan transition-colors duration-300 leading-tight">
+          <h3 className="text-lg md:text-2xl font-black text-white group-hover:text-accentCyan transition-colors duration-300 leading-tight">
             {title}
           </h3>
           <motion.div
             initial={{ opacity: 0, rotate: -45 }}
             whileHover={{ opacity: 1, rotate: 0 }}
-            className="w-8 h-8 rounded-full border border-accentCyan/30 flex items-center justify-center text-accentCyan flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300"
+            className="w-8 h-8 rounded-full border border-accentCyan/30 hidden md:flex items-center justify-center text-accentCyan flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300"
           >
             <ArrowUpRight size={14} />
           </motion.div>
         </div>
 
-        <p className="text-secondaryText text-sm leading-relaxed line-clamp-2">{description}</p>
+        <p className="text-secondaryText text-xs md:text-sm leading-relaxed line-clamp-2 md:line-clamp-none">{description}</p>
 
         {/* Tech Badges */}
         <div className="flex flex-wrap gap-2 pt-1">
           {technologies.map((tech) => (
             <span
               key={tech}
-              className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] text-accentSilver font-mono hover:text-accentCyan hover:border-accentCyan/30 hover:bg-accentCyan/5 transition-all"
+              className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[9px] md:text-[10px] text-accentSilver font-mono hover:text-accentCyan hover:border-accentCyan/30 hover:bg-accentCyan/5 transition-all"
             >
               {tech}
             </span>
@@ -166,9 +194,9 @@ export default function ProjectCard({
         </div>
       </div>
 
-      {/* Bottom glow on hover */}
+      {/* Bottom glow on hover (Desktop) */}
       <div
-        className="absolute bottom-0 left-0 w-full h-1 opacity-0 group-hover:opacity-100 transition-all duration-500"
+        className="absolute bottom-0 left-0 w-full h-1 opacity-0 md:group-hover:opacity-100 transition-all duration-500"
         style={{ background: `linear-gradient(90deg, transparent, ${categoryColor}, transparent)` }}
       />
     </motion.div>

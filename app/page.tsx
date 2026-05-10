@@ -9,7 +9,6 @@ import Navigation from "@/components/Navigation";
 import ProjectsGrid from "@/components/ProjectsGrid";
 import ScrollyCanvas from "@/components/ScrollyCanvas";
 import SkillsSection from "@/components/SkillsSection";
-import Background3D from "@/components/Background3D";
 
 export default function Home() {
   return (
@@ -24,11 +23,6 @@ export default function Home() {
 
       {/* Main Content Sections */}
       <div>
-        {/* The 3D background stays fixed behind the content after the hero */}
-        <div className="fixed inset-0 z-[-1]">
-          <Background3D />
-        </div>
-        
         <ProjectsGrid />
         <GithubActivity />
         <EducationTimeline />
@@ -39,8 +33,6 @@ export default function Home() {
         <ContactSection />
         <Footer />
       </div>
-
-      {/* Custom Cursor Effects could be added here */}
     </main>
   );
 }

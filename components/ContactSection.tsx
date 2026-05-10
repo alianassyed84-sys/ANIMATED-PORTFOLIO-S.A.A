@@ -7,7 +7,7 @@ import { Send, Mail, MapPin, Github, Linkedin, Twitter, ExternalLink, CheckCircl
 const SOCIALS = [
   { icon: Github, label: "GitHub", href: "https://github.com/alianassyed84", color: "#fff" },
   { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/in/syedanasali", color: "#0A66C2" },
-  { icon: Mail, label: "Email", href: "mailto:syedanasali.dev@gmail.com", color: "#64FFDA" },
+  { icon: Mail, label: "Email", href: "https://mail.google.com/mail/?view=cm&fs=1&to=syedanasaliofficialdeveloper@gmail.com", color: "#64FFDA" },
 ];
 
 export default function ContactSection() {
@@ -80,8 +80,8 @@ export default function ContactSection() {
                 {
                   icon: Mail,
                   label: "Email",
-                  value: "syedanasali.dev@gmail.com",
-                  href: "mailto:syedanasali.dev@gmail.com",
+                  value: "syedanasaliofficialdeveloper@gmail.com",
+                  href: "https://mail.google.com/mail/?view=cm&fs=1&to=syedanasaliofficialdeveloper@gmail.com",
                 },
                 {
                   icon: MapPin,
@@ -119,9 +119,9 @@ export default function ContactSection() {
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.1, y: -3 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileTap={{ scale: 0.9, y: 0 }}
                     title={social.label}
-                    className="w-12 h-12 rounded-2xl glass-card flex items-center justify-center text-secondaryText hover:text-white hover:border-accentCyan/40 transition-all duration-300"
+                    className="w-12 h-12 rounded-2xl glass-card flex items-center justify-center text-secondaryText hover:text-white hover:border-accentCyan/40 active:border-accentCyan active:text-accentCyan transition-all duration-300"
                   >
                     <social.icon size={20} />
                   </motion.a>
@@ -220,14 +220,14 @@ export default function ContactSection() {
                     type="submit"
                     disabled={loading}
                     whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full flex items-center justify-center gap-3 bg-accentCyan text-background py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-white hover:shadow-[0_0_30px_rgba(100,255,218,0.3)] transition-all disabled:opacity-70"
+                    whileTap={{ scale: 0.96 }}
+                    className="w-full flex items-center justify-center gap-3 bg-accentCyan text-background py-4 md:py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-white hover:shadow-[0_0_30px_rgba(100,255,218,0.3)] active:scale-95 transition-all disabled:opacity-70"
                   >
                     {loading ? (
                       <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
                     ) : (
                       <>
-                        <Send size={16} strokeWidth={3} />
+                        <Send size={16} strokeWidth={3} className="group-active:translate-x-1 transition-transform" />
                         Send Message
                       </>
                     )}

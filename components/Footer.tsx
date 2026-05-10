@@ -6,7 +6,7 @@ import { Github, Linkedin, Mail, Twitter, ArrowUp, Heart } from "lucide-react";
 const SOCIALS = [
   { icon: Github, href: "https://github.com/alianassyed84", label: "GitHub" },
   { icon: Linkedin, href: "https://linkedin.com/in/syedanasali", label: "LinkedIn" },
-  { icon: Mail, href: "mailto:syedanasali.dev@gmail.com", label: "Email" },
+  { icon: Mail, href: "https://mail.google.com/mail/?view=cm&fs=1&to=syedanasaliofficialdeveloper@gmail.com", label: "Email" },
 ];
 
 const NAV_LINKS = [
@@ -109,27 +109,31 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8">
-          <div className="flex items-center gap-2 text-secondaryText text-xs font-mono">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-8">
+          <div className="flex flex-col items-center sm:items-start gap-2 text-secondaryText text-[10px] md:text-xs font-mono text-center sm:text-left">
             <span>© {currentYear} SYED ANAS ALI.</span>
-            <span className="hidden sm:inline text-white/10">|</span>
-            <span className="hidden sm:flex items-center gap-1">
-              Built with <Heart size={10} className="text-red-400 fill-red-400" /> & Next.js
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="hidden sm:inline text-white/10">|</span>
+              <span className="flex items-center gap-1">
+                Built with <Heart size={10} className="text-red-400 fill-red-400" /> & Next.js
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4 text-[10px] tracking-widest uppercase text-secondaryText">
-            <a href="#" className="hover:text-accentCyan transition-colors">Privacy</a>
-            <span className="w-1 h-1 rounded-full bg-white/20" />
-            <a href="#" className="hover:text-accentCyan transition-colors">Terms</a>
-            <span className="w-1 h-1 rounded-full bg-white/20" />
+          <div className="flex flex-col items-center sm:items-end gap-4">
+            <div className="flex items-center gap-4 text-[10px] tracking-widest uppercase text-secondaryText">
+              <a href="#" className="hover:text-accentCyan transition-colors">Privacy</a>
+              <span className="w-1 h-1 rounded-full bg-white/20" />
+              <a href="#" className="hover:text-accentCyan transition-colors">Terms</a>
+            </div>
+            
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="group flex items-center gap-1.5 hover:text-accentCyan transition-colors"
+              className="group flex items-center gap-2.5 px-4 py-2 bg-white/5 rounded-full border border-white/10 text-secondaryText hover:text-accentCyan transition-all active:scale-95"
             >
-              Back to top
-              <div className="w-5 h-5 rounded-full border border-current flex items-center justify-center group-hover:bg-accentCyan group-hover:border-accentCyan group-hover:text-background transition-all">
-                <ArrowUp size={10} />
+              <span className="text-[10px] font-black uppercase tracking-widest">Back to top</span>
+              <div className="w-6 h-6 rounded-full border border-current flex items-center justify-center group-hover:bg-accentCyan group-hover:border-accentCyan group-hover:text-background transition-all">
+                <ArrowUp size={12} />
               </div>
             </button>
           </div>

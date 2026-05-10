@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 const ORBITS = [
@@ -34,34 +35,48 @@ const ORBITS = [
 ];
 
 export default function SkillSphere() {
-  const SIZE = 700;
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 768;
+  const SIZE = isMobile ? Math.min(windowWidth - 40, 450) : 700;
   const CENTER = SIZE / 2;
+  const SCALE = isMobile ? SIZE / 700 : 1;
 
   return (
-    <div className="w-full flex items-center justify-center py-8" style={{ minHeight: SIZE }}>
+    <div className="w-full flex items-center justify-center py-4 md:py-8" style={{ minHeight: SIZE }}>
       <div className="relative" style={{ width: SIZE, height: SIZE }}>
 
         {/* ── Orbit ring traces ── */}
-        {ORBITS.map((orbit, i) => (
-          <div
-            key={`ring-${i}`}
-            className="absolute rounded-full pointer-events-none"
-            style={{
-              width: orbit.radius * 2,
-              height: orbit.radius * 2,
-              top: CENTER - orbit.radius,
-              left: CENTER - orbit.radius,
-              border: `1px solid ${orbit.color}20`,
-              boxShadow: `0 0 20px ${orbit.color}08`,
-            }}
-          />
-        ))}
+        {ORBITS.map((orbit, i) => {
+          const radius = orbit.radius * SCALE;
+          return (
+            <div
+              key={`ring-${i}`}
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                width: radius * 2,
+                height: radius * 2,
+                top: CENTER - radius,
+                left: CENTER - radius,
+                border: `1px solid ${orbit.color}20`,
+                boxShadow: `0 0 20px ${orbit.color}08`,
+              }}
+            />
+          );
+        })}
 
         {/* ── Orbiting skill pills ── */}
         {ORBITS.map((orbit, orbitIdx) =>
           orbit.skills.map((skill, skillIdx) => {
             const totalSkills = orbit.skills.length;
             const startAngle = (360 / totalSkills) * skillIdx;
+            const radius = orbit.radius * SCALE;
 
             return (
               // Orbit container — rotates 360° continuously
@@ -69,10 +84,10 @@ export default function SkillSphere() {
                 key={`${orbitIdx}-${skill}`}
                 style={{
                   position: "absolute",
-                  width: orbit.radius * 2,
-                  height: orbit.radius * 2,
-                  top: CENTER - orbit.radius,
-                  left: CENTER - orbit.radius,
+                  width: radius * 2,
+                  height: radius * 2,
+                  top: CENTER - radius,
+                  left: CENTER - radius,
                   borderRadius: "50%",
                   rotate: startAngle,
                 }}
@@ -88,7 +103,7 @@ export default function SkillSphere() {
                 <motion.div
                   style={{
                     position: "absolute",
-                    top: -14,
+                    top: isMobile ? -10 : -14,
                     left: "50%",
                     x: "-50%",
                     rotate: -startAngle,
@@ -102,7 +117,7 @@ export default function SkillSphere() {
                   }}
                 >
                   <span
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold whitespace-nowrap select-none text-[11px] uppercase tracking-wider"
+                    className="inline-flex items-center gap-1 px-2 md:gap-1.5 md:px-3 py-0.5 md:py-1 rounded-full font-bold whitespace-nowrap select-none text-[8px] md:text-[11px] uppercase tracking-wider"
                     style={{
                       color: orbit.color,
                       background: `${orbit.color}12`,
@@ -111,7 +126,7 @@ export default function SkillSphere() {
                     }}
                   >
                     <span
-                      className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                      className="w-1 md:w-1.5 h-1 md:h-1.5 rounded-full flex-shrink-0"
                       style={{ background: orbit.color, boxShadow: `0 0 6px ${orbit.color}` }}
                     />
                     {skill}
@@ -131,8 +146,8 @@ export default function SkillSphere() {
           <motion.div
             className="absolute rounded-full"
             style={{
-              width: 110,
-              height: 110,
+              width: 110 * SCALE,
+              height: 110 * SCALE,
               top: "50%",
               left: "50%",
               x: "-50%",
@@ -147,8 +162,8 @@ export default function SkillSphere() {
           <div
             className="absolute rounded-full"
             style={{
-              width: 80,
-              height: 80,
+              width: 80 * SCALE,
+              height: 80 * SCALE,
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
@@ -161,8 +176,8 @@ export default function SkillSphere() {
           <motion.div
             className="relative flex items-center justify-center rounded-full"
             style={{
-              width: 72,
-              height: 72,
+              width: 72 * SCALE,
+              height: 72 * SCALE,
               background: "linear-gradient(135deg, #64FFDA 0%, #3B82F6 60%, #7C3AED 100%)",
               boxShadow:
                 "0 0 30px rgba(100,255,218,0.4), 0 0 60px rgba(100,255,218,0.15), inset 0 1px 0 rgba(255,255,255,0.2)",
@@ -170,21 +185,21 @@ export default function SkillSphere() {
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           >
-            <span className="font-black text-sm text-[#0A192F] tracking-tight drop-shadow">
+            <span className="font-black text-[10px] md:text-sm text-[#0A192F] tracking-tight drop-shadow">
               SAA
             </span>
           </motion.div>
         </div>
 
         {/* ── Legend ── */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-4 flex-wrap justify-center pb-2">
+        <div className="absolute bottom-[-20px] md:bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-2 md:gap-4 flex-wrap justify-center pb-2">
           {ORBITS.map((orbit, i) => (
-            <div key={i} className="flex items-center gap-1.5">
+            <div key={i} className="flex items-center gap-1 md:gap-1.5">
               <span
-                className="w-2 h-2 rounded-full"
+                className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full"
                 style={{ background: orbit.color, boxShadow: `0 0 5px ${orbit.color}` }}
               />
-              <span className="text-[10px] text-white/30 font-mono">
+              <span className="text-[8px] md:text-[10px] text-white/30 font-mono">
                 Orbit {i + 1}
               </span>
             </div>

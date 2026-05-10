@@ -156,10 +156,11 @@ export default function ScrollyCanvas() {
           1
         );
 
-        const gradientStartX = canvasWidth * 0.45;
+        const isMobile = canvasWidth < 768;
+        const gradientStartX = isMobile ? canvasWidth * 0.05 : canvasWidth * 0.45;
         const gradient = ctx.createLinearGradient(gradientStartX, 0, canvasWidth, 0);
         gradient.addColorStop(0, `rgba(10, 25, 47, 0)`);
-        gradient.addColorStop(0.15, `rgba(10, 25, 47, ${progress})`);
+        gradient.addColorStop(isMobile ? 0.3 : 0.15, `rgba(10, 25, 47, ${progress})`);
         gradient.addColorStop(1, `rgba(10, 25, 47, ${progress})`);
         ctx.fillStyle = gradient;
         ctx.fillRect(gradientStartX, 0, canvasWidth - gradientStartX, canvasHeight);
@@ -175,7 +176,7 @@ export default function ScrollyCanvas() {
           );
 
           const maskAreaWidth = canvasWidth - gradientStartX;
-          const centerX = gradientStartX + maskAreaWidth * 0.5;
+          const centerX = isMobile ? canvasWidth / 2 : gradientStartX + maskAreaWidth * 0.5;
 
           ctx.save();
           ctx.globalAlpha = heroProgress;
@@ -184,28 +185,29 @@ export default function ScrollyCanvas() {
           ctx.shadowOffsetX = 0;
           ctx.shadowOffsetY = 0;
 
-          const baseNameSize = canvasWidth > 1200 ? 110 : canvasWidth > 768 ? 85 : 45;
-          const taglineSize = canvasWidth > 768 ? "18px" : "13px";
+          const baseNameSize = canvasWidth > 1200 ? 110 : canvasWidth > 768 ? 85 : 48;
+          const taglineSize = canvasWidth > 768 ? "18px" : "11px";
 
           ctx.textAlign = "center";
           ctx.textBaseline = "top";
 
           // Calculate vertical flow
-          const totalTextH = baseNameSize * 3.7;
+          const totalTextH = baseNameSize * (isMobile ? 3.2 : 3.7);
           const startY = (canvasHeight - totalTextH) / 2;
 
           // --- LUMINOUS PARTICLES SYSTEM ---
           if (heroProgress > 0) {
-            // Spawn new particles occasionally
-            if (Math.random() < 0.8 * heroProgress) {
+            // Spawn new particles occasionally (fewer on mobile)
+            const spawnRate = isMobile ? 0.3 : 0.8;
+            if (Math.random() < spawnRate * heroProgress) {
                 particlesRef.current.push({
-                    x: centerX + (Math.random() - 0.5) * (canvasWidth * 0.4),
+                    x: centerX + (Math.random() - 0.5) * (canvasWidth * (isMobile ? 0.8 : 0.4)),
                     y: startY + totalTextH + 50, // start from bottom of text
                     vx: (Math.random() - 0.5) * 1.5,
                     vy: -Math.random() * 2 - 1, // float upward
                     life: 0,
                     maxLife: 60 + Math.random() * 80,
-                    size: Math.random() * 2 + 1,
+                    size: Math.random() * (isMobile ? 1.5 : 2) + 1,
                     color: Math.random() > 0.5 ? "#00E5FF" : "#FDE484"
                 });
             }
@@ -226,7 +228,7 @@ export default function ScrollyCanvas() {
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fillStyle = p.color;
                 ctx.globalAlpha = pAlpha;
-                ctx.shadowBlur = 15;
+                ctx.shadowBlur = isMobile ? 10 : 15;
                 ctx.shadowColor = p.color;
                 ctx.fill();
                 ctx.restore();
@@ -246,26 +248,19 @@ export default function ScrollyCanvas() {
             ctx.save();
             ctx.font = `italic 700 ${size}px "Bodoni MT", "Didot", "Cinzel Decorative", serif`;
             
-            ctx.translate(centerX + xOffset, y + size/2);
+            ctx.translate(centerX + (isMobile ? 0 : xOffset), y + size/2);
             ctx.rotate((rotDeg * Math.PI) / 180);
             
             // --- MOTION BLUR TRAILS ---
-            // Draw multiple semi-transparent copies offset downwards
-            const trailsCount = Math.floor(6 * heroProgress); 
+            const trailsCount = isMobile ? 3 : Math.floor(6 * heroProgress); 
             for(let i = trailsCount; i >= 1; i--) {
                 ctx.save();
-                const trailOffsetY = i * 8; // move downwards for upward trail effect
+                const trailOffsetY = i * (isMobile ? 4 : 8); 
                 ctx.translate(0, trailOffsetY); 
-                // Fade out trails the further away they are
                 ctx.globalAlpha = heroProgress * (0.15 / i);
-                
-                // Keep trails monochromatic based on the variant
                 ctx.fillStyle = colorVariant === "cyan" ? "#00B8D4" : colorVariant === "gold" ? "#D4AF37" : "#B0BEC5";
-                
-                // Add extreme blur to the trails
-                ctx.shadowBlur = 20;
+                ctx.shadowBlur = isMobile ? 10 : 20;
                 ctx.shadowColor = ctx.fillStyle;
-                
                 ctx.fillText(text, 0, -size/2);
                 ctx.restore();
             }
@@ -290,10 +285,9 @@ export default function ScrollyCanvas() {
             }
 
             ctx.shadowColor = colorVariant === "cyan" ? "rgba(0, 229, 255, 0.7)" : "rgba(212, 175, 55, 0.7)";
-            ctx.shadowBlur = 40 * heroProgress;
-            ctx.shadowOffsetY = 15 * heroProgress;
+            ctx.shadowBlur = (isMobile ? 20 : 40) * heroProgress;
+            ctx.shadowOffsetY = (isMobile ? 8 : 15) * heroProgress;
             
-            // Stroke for edge rim lighting
             ctx.lineWidth = 1.5;
             ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
             ctx.strokeText(text, 0, -size/2);
@@ -305,26 +299,26 @@ export default function ScrollyCanvas() {
             return size; 
           };
 
-          const offsetTime = Date.now() * 0.001; // subtle float animation
+          const offsetTime = Date.now() * 0.001;
           const floatY1 = Math.sin(offsetTime) * 5;
           const floatY2 = Math.cos(offsetTime * 1.2) * 5;
           const floatY3 = Math.sin(offsetTime * 0.8) * 5;
 
           const syedSize = drawCinematicText("SYED", startY + floatY1, 1, -15, -2, "silver");
-          const anasSize = drawCinematicText("ANAS", startY + floatY1 + syedSize * 0.85 + floatY2, 1.4, 10, 1.5, "gold");
-          drawCinematicText("ALI", startY + floatY1 + syedSize * 0.85 + floatY2 + anasSize * 0.75 + floatY3, 1.2, -8, -1, "cyan");
+          const anasSize = drawCinematicText("ANAS", startY + floatY1 + syedSize * (isMobile ? 0.75 : 0.85) + floatY2, 1.4, 10, 1.5, "gold");
+          drawCinematicText("ALI", startY + floatY1 + syedSize * (isMobile ? 0.75 : 0.85) + floatY2 + anasSize * (isMobile ? 0.65 : 0.75) + floatY3, 1.2, -8, -1, "cyan");
 
           ctx.shadowBlur = 20 * heroProgress;
           ctx.shadowColor = "rgba(0, 255, 255, 0.6)";
           ctx.fillStyle = "#A3F7FF";
           ctx.font = `600 ${taglineSize} "Inter", sans-serif`;
           ctx.textBaseline = "top";
-          ctx.letterSpacing = "0.6em";
+          ctx.letterSpacing = isMobile ? "0.4em" : "0.6em";
           ctx.textAlign = "center";
           ctx.fillText(
             "CREATIVE DEVELOPER",
             centerX,
-            startY + totalTextH + (canvasWidth > 768 ? 30 : 20)
+            startY + totalTextH + (isMobile ? 15 : 30)
           );
           ctx.restore();
         }
