@@ -3,6 +3,8 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { Send, Mail, MapPin, Github, Linkedin, Twitter, ExternalLink, CheckCircle2 } from "lucide-react";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../lib/firebase";
 
 const SOCIALS = [
   { icon: Github, label: "GitHub", href: "https://github.com/alianassyed84", color: "#fff" },
@@ -16,13 +18,53 @@ export default function ContactSection() {
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setLoading(false);
-    setSubmitted(true);
+    setError(null);
+    
+    try {
+      // 1. Send Email via Web3Forms
+      const web3FormsResponse = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "64883d17-a24d-48be-8673-0c6b6f80bbd1",
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+          subject: `New Portfolio Message from ${formState.name}`,
+        }),
+      });
+
+      const web3Result = await web3FormsResponse.json();
+      
+      if (!web3Result.success) {
+        throw new Error("Failed to send email notification");
+      }
+
+      // 2. Save to Firestore for the Admin Panel
+      await addDoc(collection(db, "messages"), {
+        name: formState.name,
+        email: formState.email,
+        message: formState.message,
+        createdAt: serverTimestamp(),
+        read: false, // Useful for showing "unread" notifications in the admin panel
+      });
+
+      setSubmitted(true);
+      setFormState({ name: "", email: "", message: "" });
+    } catch (err) {
+      console.error("Error submitting message: ", err);
+      setError("Failed to send message. Please try again or use direct email.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -178,6 +220,12 @@ export default function ContactSection() {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6 relative">
                   <h3 className="text-xl font-black text-white mb-2">Send a Message</h3>
+
+                  {error && (
+                    <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm px-4 py-3 rounded-xl mb-4">
+                      {error}
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">

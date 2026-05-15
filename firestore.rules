@@ -23,6 +23,13 @@ service cloud.firestore {
       allow read: if true;
       allow write: if true; // Change to isAdmin() once authentication is re-enabled
     }
+
+    match /messages/{document=**} {
+      // Anyone can send a message via the contact form
+      allow create: if true;
+      // Only admins (when auth is re-enabled) can read messages
+      allow read, update, delete: if false; 
+    }
     
     match /adminUsers/{document=**} {
       allow read, write: if false; // Only manageable from Firebase Console
