@@ -38,30 +38,38 @@ export default function ContactSection() {
           name: formState.name,
           email: formState.email,
           message: formState.message,
-          subject: `New Portfolio Message from ${formState.name}`,
+          subject: `New Portfolio Message from ${formState.name || 'Visitor'}`,
         }),
       });
 
       const web3Result = await web3FormsResponse.json();
       
       if (!web3Result.success) {
-        throw new Error("Failed to send email notification");
+        console.error("Web3Forms error response:", web3Result);
+        throw new Error(web3Result.message || "Failed to send email notification");
       }
 
       // 2. Save to Firestore for the Admin Panel
-      await addDoc(collection(db, "messages"), {
-        name: formState.name,
-        email: formState.email,
-        message: formState.message,
-        createdAt: serverTimestamp(),
-        read: false, // Useful for showing "unread" notifications in the admin panel
-      });
+      // We wrap this in a separate try-catch so that if Firebase rules aren't deployed yet,
+      // it won't prevent the form from showing a success message for the email.
+      try {
+        await addDoc(collection(db, "messages"), {
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+          createdAt: serverTimestamp(),
+          read: false, 
+        });
+      } catch (fbError) {
+        console.warn("Could not save to Firebase (likely rules are not deployed yet):", fbError);
+        // We don't throw here, so the user still sees success for the email sending.
+      }
 
       setSubmitted(true);
       setFormState({ name: "", email: "", message: "" });
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error submitting message: ", err);
-      setError("Failed to send message. Please try again or use direct email.");
+      setError(err.message || "Failed to send message. Please try again or use direct email.");
     } finally {
       setLoading(false);
     }
