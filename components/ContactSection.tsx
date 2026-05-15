@@ -34,11 +34,12 @@ export default function ContactSection() {
           Accept: "application/json",
         },
         body: JSON.stringify({
-          access_key: "64883d17-a24d-48be-8673-0c6b6f80bbd1",
+          access_key: "8984cef0-b989-49b8-80cb-bcb47c5a3886",
           name: formState.name,
           email: formState.email,
           message: formState.message,
           subject: `New Portfolio Message from ${formState.name || 'Visitor'}`,
+          from_name: "Portfolio Contact Form",
         }),
       });
 

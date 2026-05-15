@@ -27,8 +27,8 @@ service cloud.firestore {
     match /messages/{document=**} {
       // Anyone can send a message via the contact form
       allow create: if true;
-      // Only admins (when auth is re-enabled) can read messages
-      allow read, update, delete: if false; 
+      // Allow admin panel to read/update messages
+      allow read, update, delete: if true; 
     }
     
     match /adminUsers/{document=**} {
