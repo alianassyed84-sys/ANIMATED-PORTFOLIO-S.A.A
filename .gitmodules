@@ -1,0 +1,3 @@
+[submodule "admin_repo"]
+	path = admin_repo
+	url = https://github.com/alianassyed84-sys/admin_repo.git
