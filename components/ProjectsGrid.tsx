@@ -2,7 +2,11 @@
 
 import ProjectCard from "./ProjectCard";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import GlitchText from "./GlitchText";
+
 
 const PROJECTS = [
   {
@@ -45,14 +49,29 @@ const PROJECTS = [
   },
 ];
 
-const FILTERS = ["All", "E-COMMERCE", "EDUCATION", "AI", "FULLSTACK"];
-
 export default function ProjectsGrid() {
+  const [dbProjects, setDbProjects] = useState<any[]>([]);
   const [activeFilter, setActiveFilter] = useState("All");
 
+  useEffect(() => {
+    const q = collection(db, "projects");
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data: any[] = [];
+      snapshot.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
+      data.sort((a, b) => (a.order || 0) - (b.order || 0));
+      setDbProjects(data);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const activeProjects = dbProjects.length > 0 ? dbProjects : PROJECTS;
+
+  // Generate dynamic filters
+  const filters = ["All", ...Array.from(new Set(activeProjects.map(p => p.category.toUpperCase())))];
+
   const filtered = activeFilter === "All"
-    ? PROJECTS
-    : PROJECTS.filter((p) => p.category === activeFilter);
+    ? activeProjects
+    : activeProjects.filter((p) => p.category.toUpperCase() === activeFilter.toUpperCase());
 
   return (
     <section id="work" className="py-16 md:py-32 px-4 md:px-12 bg-secondary relative overflow-hidden">
@@ -82,7 +101,7 @@ export default function ProjectsGrid() {
             viewport={{ once: true }}
             className="text-4xl sm:text-6xl md:text-8xl font-black text-white leading-[0.9]"
           >
-            FEATURED <br />
+            <GlitchText text="FEATURED" className="block" glitchInterval={4000} />
             <span className="text-secondaryText/30">PROJECTS</span>
           </motion.h2>
           <motion.p
@@ -102,7 +121,7 @@ export default function ProjectsGrid() {
           viewport={{ once: true }}
           className="flex flex-wrap gap-2"
         >
-          {FILTERS.map((filter) => (
+          {filters.map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
@@ -122,7 +141,7 @@ export default function ProjectsGrid() {
           <AnimatePresence mode="popLayout">
             {filtered.map((project) => (
               <motion.div
-                key={project.title}
+                key={project.id || project.title}
                 layout
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -149,8 +168,8 @@ export default function ProjectsGrid() {
             { value: "100%", label: "Passion Driven" },
             { value: "∞", label: "Ideas Brewing" },
           ].map((stat) => (
-            <div key={stat.label} className="text-center space-y-1 py-6 glass-card rounded-2xl">
-              <div className="text-3xl md:text-4xl font-black text-accentCyan">{stat.value}</div>
+            <div key={stat.label} className="text-center space-y-1 py-6 glass-card-crazy holo-border rounded-2xl">
+              <div className="text-3xl md:text-4xl font-black text-accentCyan neon-flicker">{stat.value}</div>
               <div className="text-secondaryText text-xs uppercase tracking-widest font-bold">{stat.label}</div>
             </div>
           ))}

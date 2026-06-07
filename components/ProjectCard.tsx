@@ -1,9 +1,9 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { ExternalLink, Github, ArrowUpRight } from "lucide-react";
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
+import { ExternalLink, Github, ArrowUpRight, Play, VolumeX } from "lucide-react";
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 
 interface ProjectCardProps {
   category: string;
@@ -12,7 +12,9 @@ interface ProjectCardProps {
   title: string;
   description: string;
   technologies: string[];
-  image: string;
+  image?: string;
+  images?: string[];
+  videoUrl?: string;
   liveUrl?: string;
   githubUrl?: string;
   featured?: boolean;
@@ -26,11 +28,22 @@ export default function ProjectCard({
   description,
   technologies,
   image,
+  images,
+  videoUrl,
   liveUrl,
   githubUrl,
   featured,
 }: ProjectCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // States
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  // Resolve images array
+  const displayImages = images && images.length > 0 ? images : [image || "/projects/placeholder.png"];
 
   // 3D tilt effect
   const mouseX = useMotionValue(0);
@@ -47,9 +60,38 @@ export default function ProjectCard({
     mouseY.set(y);
   };
 
+  // Automatic slideshow
+  useEffect(() => {
+    if (displayImages.length <= 1) return;
+    
+    const interval = setInterval(() => {
+      setCurrentSlideIndex((prev) => (prev + 1) % displayImages.length);
+    }, 3000);
+    
+    return () => clearInterval(interval);
+  }, [displayImages.length]);
+
+  // Video hover controls
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !videoUrl) return;
+
+    if (isHovered) {
+      video.currentTime = 0;
+      video.play().catch((err) => console.log("Video autoplay blocked/failed: ", err));
+    } else {
+      video.pause();
+    }
+  }, [isHovered, videoUrl]);
+
   const handleMouseLeave = () => {
     mouseX.set(0);
     mouseY.set(0);
+    setIsHovered(false);
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
   };
 
   // Handle tap for mobile (since hover isn't reliable)
@@ -73,29 +115,91 @@ export default function ProjectCard({
         willChange: "transform" 
       }}
       onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleTap}
-      className="group relative glass-card overflow-hidden rounded-3xl cursor-pointer"
+      className="group relative glass-card-crazy holo-border scanline-sweep overflow-hidden rounded-3xl cursor-pointer"
     >
       {featured && (
-        <div className="absolute -top-3 left-8 z-20 px-4 py-1.5 bg-accentCyan text-background text-[10px] font-black uppercase tracking-widest rounded-full shadow-[0_0_20px_rgba(100,255,218,0.4)]">
+        <div className="absolute -top-3 left-8 z-20 px-4 py-1.5 bg-accentCyan text-background text-[10px] font-black uppercase tracking-widest rounded-full neon-flicker shadow-[0_0_20px_rgba(100,255,218,0.6)]">
           Featured
         </div>
       )}
 
-      {/* Image Container */}
-      <div className="h-52 sm:h-60 md:h-72 overflow-hidden relative">
-        <Image
-          src={image}
-          alt={title}
-          fill
-          className="object-cover transition-transform duration-700 md:group-hover:scale-110"
-        />
+      {/* Image / Video Container */}
+      <div className="h-52 sm:h-60 md:h-72 overflow-hidden relative bg-black/40">
+        {/* Slideshow of Images */}
+        <div className="absolute inset-0 z-0">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlideIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={displayImages[currentSlideIndex]}
+                alt={`${title} - slide ${currentSlideIndex}`}
+                fill
+                priority={currentSlideIndex === 0}
+                className="object-cover transition-transform duration-700 md:group-hover:scale-105"
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Video Showcase Overlay (Plays on hover) */}
+        {videoUrl && (
+          <div 
+            className={`absolute inset-0 z-10 bg-black transition-opacity duration-500 ${
+              isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+          >
+            <video
+              ref={videoRef}
+              src={videoUrl}
+              loop
+              muted
+              playsInline
+              onLoadedData={() => setVideoLoaded(true)}
+              className="w-full h-full object-cover"
+            />
+            {/* Small glass badge showing it's a video demonstration */}
+            <div className="absolute bottom-4 left-4 z-20 px-3 py-1 bg-black/50 backdrop-blur-md border border-white/10 rounded-lg flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-green-400">
+              <Play size={10} fill="currentColor" /> Live Showcase
+            </div>
+            {/* Speaker muted badge */}
+            <div className="absolute bottom-4 right-4 z-20 w-6 h-6 bg-black/50 backdrop-blur-md border border-white/10 rounded-full flex items-center justify-center text-white/70">
+              <VolumeX size={12} />
+            </div>
+          </div>
+        )}
+
+        {/* Slideshow Pagination Indicator Dots */}
+        {displayImages.length > 1 && !isHovered && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 bg-black/30 backdrop-blur-sm px-2.5 py-1.5 rounded-full">
+            {displayImages.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentSlideIndex(idx);
+                }}
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                  currentSlideIndex === idx ? "bg-accentCyan w-3" : "bg-white/40"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
         {/* Overlay on hover (Desktop) / Persistent small indicators (Mobile) */}
         <motion.div
           initial={{ opacity: 0 }}
           whileHover={{ opacity: 1 }}
-          className="absolute inset-0 bg-background/70 backdrop-blur-sm hidden md:flex items-center justify-center gap-4 z-10 transition-all"
+          className="absolute inset-0 bg-background/70 backdrop-blur-sm hidden md:flex items-center justify-center gap-4 z-20 transition-all"
         >
           {liveUrl && (
             <motion.a
@@ -145,7 +249,7 @@ export default function ProjectCard({
         </div>
 
         {/* Category + Year badges */}
-        <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+        <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
           <span
             className="px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase backdrop-blur-md"
             style={{
@@ -157,7 +261,7 @@ export default function ProjectCard({
             {category}
           </span>
         </div>
-        <div className="absolute top-4 right-4 z-10">
+        <div className="absolute top-4 right-4 z-20">
           <span className="text-white/60 text-[10px] md:text-xs font-mono bg-black/30 backdrop-blur-sm px-2 py-1 rounded-md">
             {year}
           </span>

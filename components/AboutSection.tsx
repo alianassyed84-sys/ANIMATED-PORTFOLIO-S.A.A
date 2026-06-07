@@ -4,6 +4,8 @@ import { motion, useInView, animate } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { CheckCircle2, Code2, Zap, Trophy, Coffee } from "lucide-react";
 import Image from "next/image";
+import GlitchText from "./GlitchText";
+
 
 const POINTS = [
   "Currently pursuing B.E. in Computer Science & Engineering",
@@ -44,7 +46,7 @@ function StatCounter({
   }, [isInView, value, delay]);
 
   return (
-    <div ref={ref} className="glass-card p-5 rounded-2xl text-center group hover:border-accentCyan/30 transition-all duration-300">
+    <div ref={ref} className="glass-card-crazy aurora-border p-5 rounded-2xl text-center group transition-all duration-300">
       <div
         className="w-10 h-10 rounded-xl mx-auto mb-3 flex items-center justify-center transition-all duration-300 group-hover:scale-110"
         style={{ backgroundColor: `${color}15`, color }}
@@ -87,7 +89,8 @@ export default function AboutSection() {
             style={{ willChange: "transform, opacity" }}
             className="text-4xl sm:text-6xl md:text-8xl font-black text-white"
           >
-            ABOUT <br />
+            <GlitchText text="ABOUT" glitchInterval={5000} />
+            <br />
             <span className="text-secondaryText/30 uppercase">Myself</span>
           </motion.h2>
         </div>
@@ -99,7 +102,7 @@ export default function AboutSection() {
             animate={isInView ? { opacity: 1, scale: 1, x: 0 } : {}}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
             style={{ willChange: "transform, opacity" }}
-            className="relative group"
+            className="relative group float-slow"
           >
             <div className="relative aspect-[3/4] rounded-3xl overflow-hidden border-2 border-accentCyan/20 group-hover:border-accentCyan/50 transition-colors duration-500 shadow-[0_0_40px_rgba(100,255,218,0.08)] group-hover:shadow-[0_0_60px_rgba(100,255,218,0.18)]">
               <div className="absolute inset-0 bg-accentCyan/10 group-hover:bg-transparent transition-colors duration-500 z-10" />

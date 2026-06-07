@@ -7,6 +7,8 @@ import {
   Layout, Server, Users, Lightbulb, MessageSquare, Target, Puzzle, Clock,
 } from "lucide-react";
 import SkillSphere from "./SkillSphere";
+import GlitchText from "./GlitchText";
+
 
 // ─── TECHNICAL SKILLS ───────────────────────────────────────────────────────
 const TECH_SKILLS = [
@@ -156,7 +158,8 @@ export default function SkillsSection() {
             style={{ willChange: "transform, opacity" }}
             className="text-4xl sm:text-6xl md:text-8xl font-black text-white"
           >
-            TECH <br />
+            <GlitchText text="TECH" glitchInterval={3200} />
+            <br />
             <span className="text-secondaryText/30 uppercase">Stack</span>
           </motion.h2>
         </div>
@@ -206,7 +209,7 @@ export default function SkillsSection() {
                 viewport={{ once: true }}
                 transition={{ delay: catIndex * 0.1, duration: 0.8 }}
                 style={{ willChange: "transform, opacity" }}
-                className="glass-card p-7 rounded-3xl space-y-6 group hover:border-accentCyan/30 transition-all duration-500"
+                className="glass-card-crazy holo-border p-7 rounded-3xl space-y-6 group transition-all duration-500"
               >
                 <div className="flex items-center gap-3">
                   <div

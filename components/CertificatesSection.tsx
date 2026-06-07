@@ -4,6 +4,8 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Award, ExternalLink, Trophy, Star } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
+import GlitchText from "./GlitchText";
+
 
 // ============================================================================
 // 🏆 HOW TO ADD NEW CERTIFICATES / HACKATHONS
@@ -92,7 +94,7 @@ function CertificateCard({ cert, index, onClick }: { cert: Certificate, index: n
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={() => onClick(cert)}
-      className="group relative glass-card rounded-3xl overflow-hidden flex flex-col h-full hover:border-white/20 transition-colors cursor-pointer"
+      className="group relative glass-card-crazy holo-border scanline-sweep rounded-3xl overflow-hidden flex flex-col h-full transition-all cursor-pointer"
     >
       {/* Type Badge */}
       <div 
@@ -221,9 +223,9 @@ export default function CertificatesSection() {
               viewport={{ once: true }}
               className="text-4xl sm:text-6xl md:text-8xl font-black text-white leading-none tracking-tight"
             >
-              HACKATHONS
+              <GlitchText text="HACKATHONS" glitchInterval={3800} />
               <br />
-              <span className="text-secondaryText/30">& CERTIFICATES</span>
+              <span className="text-secondaryText/30">&amp; CERTIFICATES</span>
             </motion.h2>
           </div>
 

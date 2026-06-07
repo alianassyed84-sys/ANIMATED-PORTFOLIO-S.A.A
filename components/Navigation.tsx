@@ -64,13 +64,15 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Scroll progress bar */}
+      {/* Scroll progress bar — animated gradient */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-[2px] z-[60] origin-left"
         style={{
           scaleX,
-          background: "linear-gradient(90deg, #64FFDA, #3b82f6)",
-          boxShadow: "0 0 8px rgba(100,255,218,0.8)",
+          background: "linear-gradient(90deg, #64FFDA, #3b82f6, #b794f6, #00E5FF, #64FFDA)",
+          backgroundSize: "200% 100%",
+          boxShadow: "0 0 12px rgba(100,255,218,0.9), 0 0 24px rgba(59,130,246,0.4)",
+          animation: "gradient-shift 3s linear infinite",
         }}
       />
 
@@ -81,10 +83,10 @@ export default function Navigation() {
         style={{ willChange: "transform" }}
         className="fixed top-2 left-0 w-full z-50 px-4 md:px-6 py-2"
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between glass-card px-4 md:px-6 py-3 rounded-full">
+        <div className="max-w-7xl mx-auto flex items-center justify-between glass-card-crazy aurora-border px-4 md:px-6 py-3 rounded-full">
           {/* Logo */}
-          <a href="#" className="text-xl font-black tracking-tighter text-white hover:text-accentCyan transition-colors">
-            SAA<span className="text-accentCyan text-xs">®</span>
+          <a href="#" className="text-xl font-black tracking-tighter text-white hover:text-accentCyan transition-colors glitch-skew">
+            SAA<span className="neon-flicker text-accentCyan text-xs">®</span>
           </a>
 
           {/* Desktop Links */}

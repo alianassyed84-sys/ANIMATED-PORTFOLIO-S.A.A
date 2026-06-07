@@ -14,5 +14,10 @@ service firebase.storage {
       allow read: if true;
       allow write: if true; // Change to `if request.auth != null;` in production
     }
+
+    match /projects/{allPaths=**} {
+      allow read: if true;
+      allow write: if true;
+    }
   }
 }

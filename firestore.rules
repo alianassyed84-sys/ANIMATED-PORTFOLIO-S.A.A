@@ -30,6 +30,11 @@ service cloud.firestore {
       // Allow admin panel to read/update messages
       allow read, update, delete: if true; 
     }
+
+    match /projects/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
     
     match /adminUsers/{document=**} {
       allow read, write: if false; // Only manageable from Firebase Console

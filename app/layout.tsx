@@ -5,6 +5,11 @@ import CustomCursor from "@/components/CustomCursor";
 import NoiseOverlay from "@/components/NoiseOverlay";
 import PageLoader from "@/components/PageLoader";
 import { Toaster } from "react-hot-toast";
+import dynamic from "next/dynamic";
+
+const Background3D = dynamic(() => import("@/components/Background3D"), {
+  ssr: false,
+});
 
 export const metadata: Metadata = {
   title: "Syed Anas Ali | Creative Developer & AI Specialist",
@@ -49,7 +54,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&family=Cinzel+Decorative:wght@400;700;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&family=Cinzel+Decorative:wght@400;700;900&family=Dancing+Script:wght@700&display=swap"
           rel="stylesheet"
         />
         {/* Theme color for mobile browsers */}
@@ -57,6 +62,9 @@ export default function RootLayout({
         <meta name="color-scheme" content="dark" />
       </head>
       <body className="font-sans antialiased bg-background text-primaryText">
+        {/* WebGL 3D Background */}
+        <Background3D />
+
         {/* Cinematic page loader */}
         <PageLoader />
 

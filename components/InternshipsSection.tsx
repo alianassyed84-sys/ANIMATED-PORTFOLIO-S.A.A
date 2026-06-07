@@ -6,6 +6,8 @@ import { Briefcase, FileText, ExternalLink, X } from "lucide-react";
 import Image from "next/image";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import GlitchText from "./GlitchText";
+
 
 interface Internship {
   id: string;
@@ -73,17 +75,18 @@ export default function InternshipsSection() {
               style={{ willChange: "transform, opacity" }}
               className="text-4xl sm:text-6xl md:text-8xl font-black text-white"
             >
-              INTERNSHIPS <br />
-              <span className="text-secondaryText/30 uppercase">& Work</span>
+              <GlitchText text="INTERNSHIPS" glitchInterval={3600} />
+              <br />
+              <span className="text-secondaryText/30 uppercase">&amp; Work</span>
             </motion.h2>
           </div>
 
           <div className="relative pt-8 md:pt-20">
-             {/* Vertical Line (desktop only) */}
-             <div className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 h-full w-[2px] bg-gradient-to-b from-accentCyan via-accentBlue to-transparent opacity-30" />
+             {/* Vertical Line (desktop only) — gradient */}
+             <div className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 h-full w-[2px]" style={{ background: "linear-gradient(180deg, #64FFDA, #3b82f6, #b794f6, transparent)", opacity: 0.5 }} />
 
              {/* Mobile vertical line */}
-             <div className="md:hidden absolute top-0 left-5 h-full w-[2px] bg-gradient-to-b from-accentCyan via-accentBlue to-transparent opacity-30" />
+             <div className="md:hidden absolute top-0 left-5 h-full w-[2px]" style={{ background: "linear-gradient(180deg, #64FFDA, #3b82f6, transparent)", opacity: 0.5 }} />
 
              {internships.map((internship, index) => {
                const side = index % 2 === 0 ? "left" : "right";
@@ -105,9 +108,9 @@ export default function InternshipsSection() {
                       style={{ willChange: "transform, opacity" }}
                       className={`w-[45%] ${side === "left" ? "text-right" : "text-left"}`}
                     >
-                      <div className="glass-card p-8 rounded-2xl space-y-4 relative group">
+                      <div className="glass-card-crazy holo-border p-8 rounded-2xl space-y-4 relative group">
                         {internship.status === "ongoing" && (
-                          <div className="absolute -top-3 left-8 px-3 py-1 bg-accentCyan/20 border border-accentCyan/40 rounded-full text-[10px] font-black text-accentCyan tracking-widest animate-pulse">
+                          <div className="absolute -top-3 left-8 px-3 py-1 bg-accentCyan text-background rounded-full text-[10px] font-black tracking-widest neon-flicker">
                             ONGOING
                           </div>
                         )}
@@ -177,7 +180,7 @@ export default function InternshipsSection() {
                       )}
                     </div>
 
-                    <div className="glass-card p-4 rounded-2xl space-y-3 relative group w-full border-white/5 active:border-accentCyan/30 transition-colors">
+                    <div className="glass-card-crazy holo-border p-4 rounded-2xl space-y-3 relative group w-full active:border-accentCyan/30 transition-colors">
                       {internship.status === "ongoing" && (
                         <div className="inline-block px-3 py-0.5 bg-accentCyan/20 border border-accentCyan/40 rounded-full text-[9px] font-black text-accentCyan tracking-widest animate-pulse mb-1">
                           ONGOING

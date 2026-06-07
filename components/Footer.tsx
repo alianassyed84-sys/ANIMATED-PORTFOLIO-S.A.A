@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Github, Linkedin, Mail, Twitter, ArrowUp, Heart } from "lucide-react";
+import { Github, Linkedin, Mail, ArrowUp, Heart, Zap } from "lucide-react";
 
 const SOCIALS = [
   { icon: Github, href: "https://github.com/alianassyed84", label: "GitHub" },
@@ -21,20 +21,34 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-secondary border-t border-white/5 relative overflow-hidden">
-      {/* Ambient glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-accentCyan/3 blur-[120px] pointer-events-none" />
+    <footer className="relative overflow-hidden" style={{ background: "linear-gradient(180deg, transparent, #000000 30%)" }}>
+      {/* Top section divider */}
+      <div className="section-divider" />
 
-      {/* Main footer content */}
-      <div className="max-w-7xl mx-auto px-4 md:px-12 py-16 relative">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 pb-12 border-b border-white/5">
+      {/* Ambient glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-accentCyan/4 blur-[150px] pointer-events-none" />
+      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-accentBlue/4 blur-[120px] pointer-events-none" />
+
+      {/* Scanline texture */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.015]"
+        style={{
+          backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(100,255,218,0.3) 3px, rgba(100,255,218,0.3) 4px)",
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 md:px-12 py-16 md:py-20 relative">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 pb-12">
           {/* Brand column */}
-          <div className="space-y-5">
+          <div className="space-y-6">
             <div>
-              <div className="text-3xl font-black tracking-tighter text-white">
-                SAA<span className="text-accentCyan text-sm">®</span>
+              <div className="text-4xl font-black tracking-tighter glitch-skew" style={{ fontFamily: '"Cinzel Decorative", serif' }}>
+                <span className="text-white">S</span>
+                <span className="text-accentCyan neon-flicker">A</span>
+                <span className="text-white">A</span>
+                <span className="text-accentCyan text-sm">®</span>
               </div>
-              <p className="text-xs font-bold text-accentCyan uppercase tracking-[0.3em] mt-1">
+              <p className="text-[10px] font-black text-accentCyan uppercase tracking-[0.4em] mt-1 animated-gradient-text">
                 Creative Developer
               </p>
             </div>
@@ -43,36 +57,40 @@ export default function Footer() {
             </p>
             {/* Social links */}
             <div className="flex gap-3">
-              {SOCIALS.map((social) => (
+              {SOCIALS.map((social, i) => (
                 <motion.a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   title={social.label}
-                  whileHover={{ scale: 1.15, y: -3 }}
+                  whileHover={{ scale: 1.15, y: -4 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-10 h-10 rounded-xl glass-card flex items-center justify-center text-secondaryText hover:text-accentCyan hover:border-accentCyan/30 transition-all duration-300"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="w-11 h-11 rounded-xl glass-card-crazy holo-border flex items-center justify-center text-secondaryText hover:text-accentCyan transition-all duration-300"
                 >
-                  <social.icon size={16} />
+                  <social.icon size={17} />
                 </motion.a>
               ))}
             </div>
           </div>
 
-          {/* Navigation column */}       
+          {/* Navigation column */}
           <div className="space-y-5">
-            <h4 className="text-white font-black uppercase tracking-widest text-xs">Navigation</h4>
+            <h4 className="text-white font-black uppercase tracking-[0.3em] text-xs">Navigation</h4>
             <ul className="space-y-3">
-              {NAV_LINKS.map((link) => (
+              {NAV_LINKS.map((link, i) => (
                 <li key={link.label}>
-                  <a
+                  <motion.a
                     href={link.href}
-                    className="text-secondaryText text-sm hover:text-accentCyan transition-colors group flex items-center gap-2"
+                    whileHover={{ x: 6 }}
+                    className="text-secondaryText text-sm hover:text-accentCyan transition-colors group flex items-center gap-3"
                   >
-                    <span className="w-4 h-px bg-secondaryText/30 group-hover:w-6 group-hover:bg-accentCyan transition-all duration-300" />
+                    <span className="w-4 h-px bg-secondaryText/20 group-hover:w-8 group-hover:bg-accentCyan transition-all duration-300" />
                     {link.label}
-                  </a>
+                  </motion.a>
                 </li>
               ))}
             </ul>
@@ -80,63 +98,59 @@ export default function Footer() {
 
           {/* Status column */}
           <div className="space-y-5">
-            <h4 className="text-white font-black uppercase tracking-widest text-xs">Status</h4>
+            <h4 className="text-white font-black uppercase tracking-[0.3em] text-xs">Status</h4>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="relative w-2.5 h-2.5 flex-shrink-0">
                   <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
                   <div className="relative w-2.5 h-2.5 rounded-full bg-green-400" />
                 </div>
-                <span className="text-sm text-white font-medium">Available for work</span>
+                <span className="text-sm text-white font-bold">Available for work</span>
               </div>
-              <div className="glass-card rounded-2xl p-4 space-y-2">
-                <p className="text-secondaryText text-xs uppercase tracking-widest font-bold">Currently</p>
-                <p className="text-white text-sm font-medium">BE CSE @ MJCET, Hyderabad</p>
-                <p className="text-secondaryText text-xs">2025 — 2029</p>
+              <div className="glass-card-crazy aurora-border rounded-2xl p-4 space-y-2">
+                <p className="text-secondaryText text-[10px] uppercase tracking-[0.3em] font-black">Currently</p>
+                <div className="flex items-center gap-2">
+                  <Zap size={14} className="text-accentCyan" />
+                  <p className="text-white text-sm font-black">BE CSE @ MJCET</p>
+                </div>
+                <p className="text-secondaryText text-xs font-mono">Hyderabad, India • 2025–2029</p>
               </div>
-              <a
+              <motion.a
                 href="/Syed_Anas_Ali_Official_CV.pdf"
                 download="Syed_Anas_Ali_Official_CV.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-accentCyan text-sm font-bold hover:underline underline-offset-4"
+                whileHover={{ x: 4 }}
+                className="inline-flex items-center gap-2 text-accentCyan text-sm font-black hover:underline underline-offset-4 group"
               >
                 Download CV
-                <ArrowUp size={14} className="rotate-45" />
-              </a>
+                <ArrowUp size={14} className="rotate-45 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              </motion.a>
             </div>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-8">
-          <div className="flex flex-col items-center sm:items-start gap-2 text-secondaryText text-[10px] md:text-xs font-mono text-center sm:text-left">
-            <span>© {currentYear} SYED ANAS ALI.</span>
-            <div className="flex items-center gap-2">
-              <span className="hidden sm:inline text-white/10">|</span>
-              <span className="flex items-center gap-1">
-                Built with <Heart size={10} className="text-red-400 fill-red-400" /> & Next.js
-              </span>
-            </div>
+        <div className="section-divider mb-8" />
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col items-center sm:items-start gap-1 text-secondaryText text-[10px] md:text-xs font-mono text-center sm:text-left">
+            <span>© {currentYear} SYED ANAS ALI — ALL RIGHTS RESERVED.</span>
+            <span className="flex items-center gap-1.5">
+              Built with <Heart size={10} className="text-red-400 fill-red-400" /> & Next.js · Powered by Framer Motion & WebGL
+            </span>
           </div>
 
-          <div className="flex flex-col items-center sm:items-end gap-4">
-            <div className="flex items-center gap-4 text-[10px] tracking-widest uppercase text-secondaryText">
-              <a href="#" className="hover:text-accentCyan transition-colors">Privacy</a>
-              <span className="w-1 h-1 rounded-full bg-white/20" />
-              <a href="#" className="hover:text-accentCyan transition-colors">Terms</a>
+          <motion.button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            whileHover={{ scale: 1.05, y: -2, boxShadow: "0 0 20px rgba(100,255,218,0.3)" }}
+            whileTap={{ scale: 0.95 }}
+            className="group flex items-center gap-2.5 px-5 py-2.5 glass-card-crazy holo-border rounded-full text-secondaryText hover:text-accentCyan transition-all"
+          >
+            <span className="text-[10px] font-black uppercase tracking-widest">Back to top</span>
+            <div className="w-6 h-6 rounded-full border border-current flex items-center justify-center group-hover:bg-accentCyan group-hover:border-accentCyan group-hover:text-background transition-all">
+              <ArrowUp size={12} />
             </div>
-            
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="group flex items-center gap-2.5 px-4 py-2 bg-white/5 rounded-full border border-white/10 text-secondaryText hover:text-accentCyan transition-all active:scale-95"
-            >
-              <span className="text-[10px] font-black uppercase tracking-widest">Back to top</span>
-              <div className="w-6 h-6 rounded-full border border-current flex items-center justify-center group-hover:bg-accentCyan group-hover:border-accentCyan group-hover:text-background transition-all">
-                <ArrowUp size={12} />
-              </div>
-            </button>
-          </div>
+          </motion.button>
         </div>
       </div>
     </footer>

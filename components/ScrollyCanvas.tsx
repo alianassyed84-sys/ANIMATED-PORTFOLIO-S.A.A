@@ -17,6 +17,21 @@ export default function ScrollyCanvas() {
   const lastIndexRef = useRef<number>(-1);
   const dimensionsRef = useRef({ w: 0, h: 0 });
   const particlesRef = useRef<{x: number, y: number, vx: number, vy: number, life: number, maxLife: number, size: number, color: string}[]>([]);
+  const typingStartTimeRef = useRef<number | null>(null);
+  // Tagline rotating typewriter state
+  const taglineRef = useRef({
+    phrases: [
+      "Creative Developer & AI Engineer",
+      "Pursuing B.E. @ MJCET, Hyderabad",
+      "Full-Stack · Computer Vision · LLMs",
+      "Building the Future with Code & AI",
+    ],
+    idx: 0,
+    chars: 0,
+    // 'typing' | 'hold' | 'erasing' | 'pause'
+    phase: "typing" as "typing" | "hold" | "erasing" | "pause",
+    lastTick: 0,
+  });
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -115,6 +130,10 @@ export default function ScrollyCanvas() {
       const rawIndex = Math.floor(rawVal) - 1;
       const safeIndex = Math.min(Math.max(rawIndex, 0), TOTAL_FRAMES - 1);
 
+      if (safeIndex < 24) {
+        typingStartTimeRef.current = null;
+      }
+
       // Skip draw if same frame as last time, UNLESS we are in the hero frames (need continuous animation)
       const isHeroActive = safeIndex >= 22;
       if (safeIndex === lastIndexRef.current && !isHeroActive) return;
@@ -185,8 +204,7 @@ export default function ScrollyCanvas() {
           ctx.shadowOffsetX = 0;
           ctx.shadowOffsetY = 0;
 
-          const baseNameSize = canvasWidth > 1200 ? 110 : canvasWidth > 768 ? 85 : 48;
-          const taglineSize = canvasWidth > 768 ? "18px" : "11px";
+          const baseNameSize = canvasWidth > 1200 ? 78 : canvasWidth > 768 ? 62 : 38;
 
           ctx.textAlign = "center";
           ctx.textBaseline = "top";
@@ -194,6 +212,105 @@ export default function ScrollyCanvas() {
           // Calculate vertical flow
           const totalTextH = baseNameSize * (isMobile ? 3.2 : 3.7);
           const startY = (canvasHeight - totalTextH) / 2;
+
+          // ══════════════════════════════════════════
+          // CINEMATIC BACKDROP — Aurora · Curtain · God Rays · Rings
+          // ══════════════════════════════════════════
+          const backdropCY = canvasHeight / 2;
+          const _t = Date.now() * 0.001;
+
+          // ── Layer 1: Deep cyan spotlight core ──
+          ctx.save();
+          ctx.globalAlpha = 1;
+          const coreR = Math.min(canvasWidth, canvasHeight) * 0.52;
+          const coreGrad = ctx.createRadialGradient(centerX, backdropCY, 0, centerX, backdropCY, coreR);
+          coreGrad.addColorStop(0,   `rgba(0,90,150,${0.72 * heroProgress})`);
+          coreGrad.addColorStop(0.45,`rgba(0,40,90,${0.28 * heroProgress})`);
+          coreGrad.addColorStop(1,   "rgba(0,0,0,0)");
+          ctx.fillStyle = coreGrad;
+          ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+          ctx.restore();
+
+          // ── Layer 2: Breathing purple/magenta orb (drifts slowly) ──
+          ctx.save();
+          ctx.globalAlpha = 1;
+          const pOx = Math.sin(_t * 0.28) * 70;
+          const pOy = Math.cos(_t * 0.22) * 40;
+          const purpleGrad = ctx.createRadialGradient(
+            centerX + pOx, backdropCY - 60 + pOy, 0,
+            centerX + pOx, backdropCY - 60 + pOy,
+            Math.min(canvasWidth, canvasHeight) * 0.42
+          );
+          purpleGrad.addColorStop(0,   `rgba(140,0,200,${0.28 * heroProgress})`);
+          purpleGrad.addColorStop(0.5, `rgba(60,0,140,${0.10 * heroProgress})`);
+          purpleGrad.addColorStop(1,   "rgba(0,0,0,0)");
+          ctx.fillStyle = purpleGrad;
+          ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+          ctx.restore();
+
+          // ── Layer 3: Vertical aurora curtain bands ──
+          ctx.save();
+          const numBands = 10;
+          const zone = canvasWidth - gradientStartX;
+          const bandW = zone / numBands;
+          for (let b = 0; b < numBands; b++) {
+            const bx = gradientStartX + b * bandW;
+            const wave = Math.sin(_t * 0.55 + b * 0.75) * 0.5 + 0.5;
+            const hue = (185 + b * 22 + _t * 8) % 360;
+            const alpha = wave * 0.09 * heroProgress;
+            const bg = ctx.createLinearGradient(bx, 0, bx, canvasHeight);
+            bg.addColorStop(0,   `hsla(${hue},100%,65%,0)`);
+            bg.addColorStop(0.25,`hsla(${hue},100%,65%,${alpha})`);
+            bg.addColorStop(0.75,`hsla(${hue},100%,65%,${alpha * 0.6})`);
+            bg.addColorStop(1,   `hsla(${hue},100%,65%,0)`);
+            ctx.fillStyle = bg;
+            ctx.fillRect(bx, 0, bandW, canvasHeight);
+          }
+          ctx.restore();
+
+          // ── Layer 4: God rays / light shafts from above ──
+          ctx.save();
+          const numShafts = isMobile ? 3 : 6;
+          const shaftSpread = isMobile ? 35 : 75;
+          for (let s = 0; s < numShafts; s++) {
+            const sx = centerX + (s - (numShafts - 1) / 2) * shaftSpread
+                       + Math.sin(_t * 0.35 + s * 1.1) * 18;
+            const shaftAlpha = (0.045 + Math.sin(_t * 0.5 + s * 0.9) * 0.02) * heroProgress;
+            const shaftW = isMobile ? 16 : 28;
+            const sg = ctx.createLinearGradient(sx, 0, sx, canvasHeight * 0.75);
+            sg.addColorStop(0,   `rgba(0,229,255,${shaftAlpha * 1.8})`);
+            sg.addColorStop(0.55,`rgba(80,180,255,${shaftAlpha})`);
+            sg.addColorStop(1,   "rgba(0,100,200,0)");
+            ctx.fillStyle = sg;
+            ctx.beginPath();
+            ctx.moveTo(sx - shaftW * 0.3, 0);
+            ctx.lineTo(sx + shaftW * 1.5, canvasHeight * 0.75);
+            ctx.lineTo(sx + shaftW * 2.2, canvasHeight * 0.75);
+            ctx.lineTo(sx + shaftW * 0.4, 0);
+            ctx.closePath();
+            ctx.fill();
+          }
+          ctx.restore();
+
+          // ── Layer 5: 3 clean outward-pulsing rings ──
+          ctx.save();
+          for (let ri = 0; ri < 3; ri++) {
+            const phase = ((_t * 0.30 + ri * 0.34) % 1);
+            const rR = 70 + phase * (isMobile ? 180 : 260);
+            const rA = (1 - phase) * 0.20 * heroProgress;
+            ctx.beginPath();
+            ctx.arc(centerX, backdropCY, rR, 0, Math.PI * 2);
+            ctx.strokeStyle = ri === 1
+              ? `rgba(212,175,55,${rA * 0.85})`
+              : `rgba(0,229,255,${rA})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+          ctx.restore();
+          // ══════════════════════════════════════════
+          // END CINEMATIC BACKDROP
+          // ══════════════════════════════════════════
+
 
           // --- LUMINOUS PARTICLES SYSTEM ---
           if (heroProgress > 0) {
@@ -242,84 +359,245 @@ export default function ScrollyCanvas() {
             sizeMult: number, 
             xOffset: number, 
             rotDeg: number,
-            colorVariant: "gold" | "cyan" | "silver"
+            colorVariant: "gold" | "cyan" | "silver",
+            showCursor = false
           ) => {
             const size = baseNameSize * sizeMult;
             ctx.save();
-            ctx.font = `italic 700 ${size}px "Bodoni MT", "Didot", "Cinzel Decorative", serif`;
+            ctx.font = `900 ${size}px "Cinzel Decorative", serif`;
             
             ctx.translate(centerX + (isMobile ? 0 : xOffset), y + size/2);
             ctx.rotate((rotDeg * Math.PI) / 180);
             
-            // --- MOTION BLUR TRAILS ---
-            const trailsCount = isMobile ? 3 : Math.floor(6 * heroProgress); 
-            for(let i = trailsCount; i >= 1; i--) {
-                ctx.save();
-                const trailOffsetY = i * (isMobile ? 4 : 8); 
-                ctx.translate(0, trailOffsetY); 
-                ctx.globalAlpha = heroProgress * (0.15 / i);
-                ctx.fillStyle = colorVariant === "cyan" ? "#00B8D4" : colorVariant === "gold" ? "#D4AF37" : "#B0BEC5";
-                ctx.shadowBlur = isMobile ? 10 : 20;
-                ctx.shadowColor = ctx.fillStyle;
-                ctx.fillText(text, 0, -size/2);
-                ctx.restore();
+            if (text) {
+              // --- CHROMATIC ABERRATION & GLITCH SLICES ---
+              // Add a subtle continuous organic shimmer + a rare random fast glitch
+              const _time = Date.now() * 0.001;
+              const isGlitched = namesDone && (Math.sin(_time * 12) > 0.95 || Math.random() < 0.02);
+              const driftX = isGlitched ? (Math.random() - 0.5) * 12 : Math.sin(_time * 3) * 1.2;
+              const driftY = isGlitched ? (Math.random() - 0.5) * 8 : Math.cos(_time * 2.5) * 0.8;
+
+              // --- MOTION BLUR TRAILS ---
+              const trailsCount = isMobile ? 2 : Math.floor(5 * heroProgress); 
+              for(let i = trailsCount; i >= 1; i--) {
+                  ctx.save();
+                  const trailOffsetY = i * (isMobile ? 3 : 6); 
+                  ctx.translate(driftX, trailOffsetY); 
+                  ctx.globalAlpha = heroProgress * (0.12 / i);
+                  ctx.fillStyle = colorVariant === "cyan" ? "#00B8D4" : colorVariant === "gold" ? "#D4AF37" : "#B0BEC5";
+                  ctx.shadowBlur = isMobile ? 8 : 15;
+                  ctx.shadowColor = ctx.fillStyle;
+                  ctx.fillText(text, 0, -size/2);
+                  ctx.restore();
+              }
+
+              // Draw Red Chromatic Channel
+              ctx.save();
+              ctx.fillStyle = "rgba(255, 0, 85, 0.65)";
+              ctx.shadowColor = "rgba(255, 0, 85, 0.4)";
+              ctx.shadowBlur = 10;
+              ctx.fillText(text, driftX - 2.5, -size/2 + driftY);
+              ctx.restore();
+
+              // Draw Blue/Cyan Chromatic Channel
+              ctx.save();
+              ctx.fillStyle = "rgba(0, 229, 255, 0.65)";
+              ctx.shadowColor = "rgba(0, 229, 255, 0.4)";
+              ctx.shadowBlur = 10;
+              ctx.fillText(text, -driftX + 2.5, -size/2 - driftY);
+              ctx.restore();
+
+              // Metallic Gradient
+              const grad = ctx.createLinearGradient(0, -size/2, 0, size/2);
+              if (colorVariant === "gold") {
+                grad.addColorStop(0, "#FFFFFF");
+                grad.addColorStop(0.2, "#FFE57F");
+                grad.addColorStop(0.5, "#D4AF37");
+                grad.addColorStop(0.8, "#997A00");
+                grad.addColorStop(1, "#FFE57F");
+              } else if (colorVariant === "cyan") {
+                grad.addColorStop(0, "#FFFFFF");
+                grad.addColorStop(0.2, "#84FFFF");
+                grad.addColorStop(0.5, "#00E5FF");
+                grad.addColorStop(0.8, "#00838F");
+                grad.addColorStop(1, "#84FFFF");
+              } else {
+                grad.addColorStop(0, "#FFFFFF");
+                grad.addColorStop(0.5, "#CFD8DC");
+                grad.addColorStop(1, "#78909C");
+              }
+
+              ctx.shadowColor = colorVariant === "cyan" ? "rgba(0, 229, 255, 0.85)" : colorVariant === "gold" ? "rgba(212, 175, 55, 0.85)" : "rgba(255, 255, 255, 0.4)";
+              ctx.shadowBlur = (isMobile ? 25 : 50) * heroProgress;
+              ctx.shadowOffsetY = (isMobile ? 6 : 12) * heroProgress;
+              
+              ctx.lineWidth = 2;
+              ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+              ctx.strokeText(text, 0, -size/2);
+
+              ctx.fillStyle = grad;
+              ctx.fillText(text, 0, -size/2);
             }
 
-            // Metallic Gradient
-            const grad = ctx.createLinearGradient(0, -size/2, 0, size/2);
-            if (colorVariant === "gold") {
-              grad.addColorStop(0, "#FEF0A5");
-              grad.addColorStop(0.3, "#D4AF37");
-              grad.addColorStop(0.5, "#FFF6C5");
-              grad.addColorStop(0.7, "#997A00");
-              grad.addColorStop(1, "#E6C200");
-            } else if (colorVariant === "cyan") {
-              grad.addColorStop(0, "#E0FFFF");
-              grad.addColorStop(0.4, "#00E5FF");
-              grad.addColorStop(0.6, "#84FFFF");
-              grad.addColorStop(1, "#00B8D4");
-            } else {
-              grad.addColorStop(0, "#FFFFFF");
-              grad.addColorStop(0.5, "#B0BEC5");
-              grad.addColorStop(1, "#78909C");
+            if (showCursor) {
+              const textWidth = text ? ctx.measureText(text).width : 0;
+              const cursorX = textWidth > 0 ? textWidth / 2 + (isMobile ? 6 : 12) : 0;
+              
+              ctx.save();
+              ctx.fillStyle = colorVariant === "cyan" ? "#00E5FF" : colorVariant === "gold" ? "#D4AF37" : "#FFFFFF";
+              ctx.shadowColor = ctx.fillStyle;
+              ctx.shadowBlur = (isMobile ? 15 : 30) * heroProgress;
+              
+              const cursorW = isMobile ? 3 : 6;
+              const cursorH = size * 0.85;
+              const cursorY = -size / 2 + (size - cursorH) / 2;
+              
+              ctx.fillRect(cursorX, cursorY, cursorW, cursorH);
+              ctx.restore();
             }
-
-            ctx.shadowColor = colorVariant === "cyan" ? "rgba(0, 229, 255, 0.7)" : "rgba(212, 175, 55, 0.7)";
-            ctx.shadowBlur = (isMobile ? 20 : 40) * heroProgress;
-            ctx.shadowOffsetY = (isMobile ? 8 : 15) * heroProgress;
-            
-            ctx.lineWidth = 1.5;
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
-            ctx.strokeText(text, 0, -size/2);
-
-            ctx.fillStyle = grad;
-            ctx.fillText(text, 0, -size/2);
 
             ctx.restore();
             return size; 
           };
+
+          // ── NAME TYPING (one-shot, time-based) ──
+          const nameDuration = 120; // ms per char
+          const nameLinePause = 350; // ms between name words
+
+          if (typingStartTimeRef.current === null) {
+            typingStartTimeRef.current = Date.now();
+          }
+          const elapsed = Date.now() - typingStartTimeRef.current;
+
+          // Segment timing for SYED / ANAS / ALI
+          const nameWords = ["SYED", "ANAS", "ALI"] as const;
+          let nameCumulative = 0;
+          const nameSegTimes = nameWords.map((w) => {
+            const start = nameCumulative;
+            const end = start + (w.length - 1) * nameDuration;
+            nameCumulative = end + nameLinePause;
+            return { start, end };
+          });
+          const totalNameDuration = nameCumulative;
+
+          const typedNames = nameWords.map((w, i) => {
+            const { start, end } = nameSegTimes[i];
+            if (elapsed < start) return "";
+            if (elapsed >= end) return w;
+            return w.slice(0, Math.floor((elapsed - start) / nameDuration) + 1);
+          });
+
+          // Active cursor for name phase (0=SYED,1=ANAS,2=ALI, -1=done)
+          let nameCursorLine = -1;
+          for (let i = 0; i < nameWords.length; i++) {
+            if (elapsed < nameSegTimes[i].end ||
+                (i < nameWords.length - 1 && elapsed < nameSegTimes[i + 1].start)) {
+              nameCursorLine = i; break;
+            }
+          }
+          const namesDone = elapsed >= totalNameDuration;
+
+          // ── LOOPING TAGLINE TYPEWRITER ──
+          const TYPE_SPEED   = 55;   // ms per char when typing
+          const ERASE_SPEED  = 28;   // ms per char when erasing (faster)
+          const HOLD_MS      = 1800; // ms to hold full phrase
+          const PAUSE_MS     = 300;  // ms pause before typing next
+
+          const tl = taglineRef.current;
+
+          if (namesDone) {
+            const now = Date.now();
+            const dt = now - (tl.lastTick || now);
+            tl.lastTick = now;
+
+            const phrase = tl.phrases[tl.idx];
+
+            if (tl.phase === "typing") {
+              // advance chars proportionally to time
+              tl.chars = Math.min(phrase.length, tl.chars + dt / TYPE_SPEED);
+              if (tl.chars >= phrase.length) {
+                tl.chars = phrase.length;
+                tl.phase = "hold";
+                tl.lastTick = now; // reset so hold timer starts fresh
+              }
+            } else if (tl.phase === "hold") {
+              // reuse lastTick as hold-start; but we already set it above so
+              // track via a dedicated accumulator by abusing lastTick
+              if (!tl["holdStart" as keyof typeof tl]) {
+                (tl as Record<string, unknown>)["holdStart"] = now;
+              }
+              const held = now - ((tl as Record<string, unknown>)["holdStart"] as number);
+              if (held >= HOLD_MS) {
+                tl.phase = "erasing";
+                (tl as Record<string, unknown>)["holdStart"] = 0;
+              }
+            } else if (tl.phase === "erasing") {
+              tl.chars = Math.max(0, tl.chars - dt / ERASE_SPEED);
+              if (tl.chars <= 0) {
+                tl.chars = 0;
+                tl.phase = "pause";
+                (tl as Record<string, unknown>)["pauseStart"] = now;
+              }
+            } else if (tl.phase === "pause") {
+              const paused = now - ((tl as Record<string, unknown>)["pauseStart"] as number || now);
+              if (paused >= PAUSE_MS) {
+                tl.idx = (tl.idx + 1) % tl.phrases.length;
+                tl.phase = "typing";
+                (tl as Record<string, unknown>)["pauseStart"] = 0;
+              }
+            }
+          } else {
+            // Reset tagline state whenever name hasn't finished yet
+            tl.chars = 0;
+            tl.phase = "typing";
+            tl.lastTick = 0;
+          }
+
+          const taglineText = namesDone
+            ? tl.phrases[tl.idx].slice(0, Math.floor(tl.chars))
+            : "";
+          const taglineCursorActive = namesDone && nameCursorLine === -1;
+
+          const isCursorVisible = Math.floor(Date.now() / 400) % 2 === 0;
 
           const offsetTime = Date.now() * 0.001;
           const floatY1 = Math.sin(offsetTime) * 5;
           const floatY2 = Math.cos(offsetTime * 1.2) * 5;
           const floatY3 = Math.sin(offsetTime * 0.8) * 5;
 
-          const syedSize = drawCinematicText("SYED", startY + floatY1, 1, -15, -2, "silver");
-          const anasSize = drawCinematicText("ANAS", startY + floatY1 + syedSize * (isMobile ? 0.75 : 0.85) + floatY2, 1.4, 10, 1.5, "gold");
-          drawCinematicText("ALI", startY + floatY1 + syedSize * (isMobile ? 0.75 : 0.85) + floatY2 + anasSize * (isMobile ? 0.65 : 0.75) + floatY3, 1.2, -8, -1, "cyan");
+          // Draw the three name lines (cinematic)
+          const syedSize = drawCinematicText(typedNames[0], startY + floatY1, 1, -15, -2, "silver", nameCursorLine === 0 && isCursorVisible);
+          const anasSize = drawCinematicText(typedNames[1], startY + floatY1 + syedSize * (isMobile ? 0.78 : 0.9) + floatY2, 1.15, 10, 1.5, "gold", nameCursorLine === 1 && isCursorVisible);
+          const aliBottomY = startY + floatY1 + syedSize * (isMobile ? 0.78 : 0.9) + floatY2 + anasSize * (isMobile ? 0.72 : 0.85) + floatY3;
+          drawCinematicText(typedNames[2], aliBottomY, 1.05, -8, -1, "cyan", nameCursorLine === 2 && isCursorVisible);
 
-          ctx.shadowBlur = 20 * heroProgress;
-          ctx.shadowColor = "rgba(0, 255, 255, 0.6)";
-          ctx.fillStyle = "#A3F7FF";
-          ctx.font = `600 ${taglineSize} "Inter", sans-serif`;
-          ctx.textBaseline = "top";
-          ctx.letterSpacing = isMobile ? "0.4em" : "0.6em";
-          ctx.textAlign = "center";
-          ctx.fillText(
-            "CREATIVE DEVELOPER",
-            centerX,
-            startY + totalTextH + (isMobile ? 15 : 30)
-          );
+          // ── Single looping tagline line ──
+          if (taglineText || taglineCursorActive) {
+            const taglineY = startY + totalTextH + (isMobile ? 16 : 32);
+            const tagFontSize = isMobile ? 11 : 16;
+
+            ctx.save();
+            ctx.globalAlpha = heroProgress;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "top";
+            ctx.letterSpacing = isMobile ? "0.3em" : "0.5em";
+            ctx.font = `700 ${isMobile ? 12 : 17}px "Inter", sans-serif`;
+            ctx.shadowColor = "rgba(0,229,255,0.75)";
+            ctx.shadowBlur = 20 * heroProgress;
+            ctx.fillStyle = "#A3F7FF";
+            ctx.fillText(taglineText, centerX, taglineY);
+
+            // blinking cursor at end of tagline
+            if (taglineCursorActive && isCursorVisible) {
+              const tw = ctx.measureText(taglineText).width;
+              const curX = centerX + tw / 2 + (isMobile ? 4 : 8);
+              ctx.fillStyle = "#00E5FF";
+              ctx.shadowBlur = 16 * heroProgress;
+              ctx.shadowColor = "#00E5FF";
+              ctx.fillRect(curX, taglineY, isMobile ? 2 : 3, tagFontSize * 1.1);
+            }
+            ctx.restore();
+          }
           ctx.restore();
         }
       }

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Github, Code2, GitCommit, Star } from "lucide-react";
+import GlitchText from "./GlitchText";
+
 
 interface GithubData {
   followers: number;
@@ -81,48 +83,64 @@ export default function GithubActivity() {
             viewport={{ once: true }}
             className="text-4xl sm:text-6xl md:text-8xl font-black text-white"
           >
-            GITHUB <br />
+            <GlitchText text="GITHUB" glitchInterval={3000} />
+            <br />
             <span className="text-secondaryText/30 uppercase">Statistics</span>
           </motion.h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-card p-6 rounded-2xl border border-white/10 flex items-center justify-between">
-             <div>
-                <p className="text-secondaryText text-xs font-bold uppercase tracking-wider mb-1">Public Repos</p>
-                <h3 className="text-3xl font-black text-white">{data.public_repos}</h3>
-             </div>
-             <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white"><Github size={24} /></div>
-          </motion.div>
+          {[
+            { label: "Public Repos", value: data.public_repos, icon: Github, color: "#64FFDA", delay: 0 },
+            { label: "Followers", value: data.followers, icon: GitCommit, color: "#3b82f6", delay: 0.1 },
+            { label: "Total Stars", value: data.totalStars, icon: Star, color: "#D4AF37", delay: 0.2 },
+          ].map((stat) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: stat.delay, duration: 0.7 }}
+              whileHover={{ y: -6, scale: 1.02 }}
+              className="glass-card-crazy holo-border p-6 rounded-2xl flex items-center justify-between float-anim"
+              style={{ animationDelay: `${stat.delay}s` }}
+            >
+              <div>
+                <p className="text-secondaryText text-[10px] font-black uppercase tracking-[0.3em] mb-1">{stat.label}</p>
+                <h3 className="text-3xl font-black" style={{ color: stat.color }}>{stat.value}</h3>
+              </div>
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{ backgroundColor: `${stat.color}15`, color: stat.color, border: `1px solid ${stat.color}30` }}
+              >
+                <stat.icon size={22} />
+              </div>
+            </motion.div>
+          ))}
 
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="glass-card p-6 rounded-2xl border border-white/10 flex items-center justify-between">
-             <div>
-                <p className="text-secondaryText text-xs font-bold uppercase tracking-wider mb-1">Followers</p>
-                <h3 className="text-3xl font-black text-white">{data.followers}</h3>
-             </div>
-             <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400"><GitCommit size={24} /></div>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="glass-card p-6 rounded-2xl border border-white/10 flex items-center justify-between">
-             <div>
-                <p className="text-secondaryText text-xs font-bold uppercase tracking-wider mb-1">Total Stars</p>
-                <h3 className="text-3xl font-black text-white">{data.totalStars}</h3>
-             </div>
-             <div className="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-400"><Star size={24} /></div>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="glass-card p-6 rounded-2xl border border-white/10 flex items-center justify-between">
-             <div>
-                <p className="text-secondaryText text-xs font-bold uppercase tracking-wider mb-1">Top Languages</p>
-                <div className="flex flex-col gap-1 mt-1">
-                  {data.topLanguages.map((lang, idx) => (
-                    <span key={idx} className="text-sm font-bold text-accentCyan flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-accentCyan" /> {lang.name}
-                    </span>
-                  ))}
-                </div>
-             </div>
-             <div className="w-12 h-12 rounded-full bg-accentCyan/10 flex items-center justify-center text-accentCyan"><Code2 size={24} /></div>
+          {/* Top Languages card */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.7 }}
+            whileHover={{ y: -6, scale: 1.02 }}
+            className="glass-card-crazy holo-border p-6 rounded-2xl flex items-center justify-between"
+          >
+            <div>
+              <p className="text-secondaryText text-[10px] font-black uppercase tracking-[0.3em] mb-2">Top Languages</p>
+              <div className="flex flex-col gap-1.5">
+                {data.topLanguages.map((lang, idx) => (
+                  <span key={idx} className="text-sm font-black text-accentCyan flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-accentCyan" style={{ boxShadow: "0 0 6px #64FFDA" }} />
+                    {lang.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-accentCyan/10 flex items-center justify-center text-accentCyan" style={{ border: "1px solid rgba(100,255,218,0.3)" }}>
+              <Code2 size={22} />
+            </div>
           </motion.div>
         </div>
 
